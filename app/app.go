@@ -4,6 +4,7 @@ import (
 
 	// "github.com/gostalt/container"
 
+	"fmt"
 	"gostalt/services"
 	"net/http"
 	"time"
@@ -47,13 +48,16 @@ func Make() *App {
 // to start the server.
 func (a *App) Run() error {
 	r := a.Container.Get("router").(*mux.Router)
+	env := a.Container.Get("env").(map[string]string)
+
 	srv := &http.Server{
 		Handler:      r,
-		Addr:         "127.0.0.1:8080",
+		Addr:         env["ADDRESS"],
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
 
+	fmt.Printf("Starting web server on %s\n", env["ADDRESS"])
 	return srv.ListenAndServe()
 }
 
