@@ -26,7 +26,7 @@ var migrateCreateCmd = &cobra.Command{
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		name := args[0]
-		f, err := goose.CreateMigration(name, "sql", "./db/migrations", time.Now())
+		f, err := goose.CreateMigration(name, "sql", "./database/migrations", time.Now())
 		if err != nil {
 			log.Println(err)
 			return
@@ -40,7 +40,7 @@ var migrateUpCmd = &cobra.Command{
 	Use:   "up",
 	Short: "Run pending migrations",
 	Run: func(cmd *cobra.Command, args []string) {
-		conf, err := goose.NewDBConf("db", "development", "")
+		conf, err := goose.NewDBConf("database", "development", "")
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -60,7 +60,7 @@ var migrateDownCmd = &cobra.Command{
 	Use:   "down",
 	Short: "Drop the most recent migrations",
 	Run: func(cmd *cobra.Command, args []string) {
-		conf, err := goose.NewDBConf("db", "development", "")
+		conf, err := goose.NewDBConf("database", "development", "")
 		if err != nil {
 			log.Fatalln(err)
 		}

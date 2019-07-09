@@ -2,7 +2,7 @@ package app
 
 import (
 	"fmt"
-	"gostalt/services"
+	"gostalt/app/services"
 	"net/http"
 	"time"
 
