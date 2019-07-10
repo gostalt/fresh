@@ -19,12 +19,12 @@ import (
 // the container so that we can use them. You can add additional
 // dependencies in the call to api in routes.go
 func apiRoutes(r *mux.Router, c di.Container) {
-	router := makeSubRouter("/api", r)
+	s := r.PathPrefix("/api").Subrouter()
 
 	// Here is the first route for the application. At the moment
 	// this is just calling Gorilla's Mux behind the scenes, so
 	// feel free to chain any methods onto the new route.
-	router.
+	s.
 		Methods(http.MethodGet).
 		Path("/welcome").
 		Handler(api.Hello{Container: c})

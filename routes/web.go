@@ -9,11 +9,11 @@ import (
 )
 
 func webRoutes(r *mux.Router, container di.Container) {
-	router := makeSubRouter("/", r)
+	s := r.PathPrefix("/").Subrouter()
 
 	views := container.Get("views").(*template.Template)
 
-	router.
+	s.
 		Methods(http.MethodGet).
 		Path("/hello").
 		HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
