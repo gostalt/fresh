@@ -1,7 +1,7 @@
 package main
 
 import (
-	"gostalt/command"
+	"gostalt/app/command"
 )
 
 func main() {

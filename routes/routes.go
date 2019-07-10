@@ -11,7 +11,7 @@ func Load(
 	router *mux.Router,
 	container di.Container,
 ) {
-	fileServer(router, "/assets/", "./assets")
+	fileServer(router, "/assets/", "./public")
 
 	apiRoutes(router, container)
 	webRoutes(router, container)

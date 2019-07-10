@@ -2,7 +2,7 @@ package command
 
 import (
 	"gostalt/app"
-	"gostalt/app/config"
+	"gostalt/config"
 	"log"
 
 	"time"

@@ -3,7 +3,7 @@ package routes
 import (
 	"net/http"
 
-	"gostalt/handler/api"
+	"gostalt/app/http/handler/api"
 
 	"github.com/gorilla/mux"
 	"github.com/sarulabs/di"

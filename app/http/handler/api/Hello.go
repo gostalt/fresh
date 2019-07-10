@@ -3,7 +3,7 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"gostalt/app/config"
+	"gostalt/config"
 	"net/http"
 )
 

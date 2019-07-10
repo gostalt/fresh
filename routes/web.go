@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"gostalt/routes/middleware"
+	"gostalt/app/http/middleware"
 	"html/template"
 	"net/http"
 

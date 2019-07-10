@@ -2,8 +2,8 @@ package services
 
 import (
 	"database/sql"
+	"gostalt/resources/views"
 	"gostalt/routes"
-	"gostalt/views"
 
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
@@ -24,7 +24,7 @@ var Services = []di.Def{
 	{
 		Name: "views",
 		Build: func(c di.Container) (interface{}, error) {
-			return views.Load("views"), nil
+			return views.Load("resources/views"), nil
 		},
 	},
 	{

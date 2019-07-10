@@ -2,8 +2,8 @@ package app
 
 import (
 	"fmt"
-	"gostalt/app/config"
 	"gostalt/app/services"
+	"gostalt/config"
 	"net/http"
 	"time"
 
