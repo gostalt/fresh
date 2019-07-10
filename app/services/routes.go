@@ -16,6 +16,7 @@ type RouteServiceProvider struct{}
 // router of the application. These middleware are ran in the
 // order they are defined on every http request to the app.
 var globalMiddlewareStack = []mux.MiddlewareFunc{
+	// for example:
 	middleware.RequestTimer,
 }
 
