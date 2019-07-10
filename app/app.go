@@ -10,6 +10,7 @@ import (
 	"github.com/sarulabs/di"
 )
 
+// App is where the magic happens.
 type App struct {
 	Container di.Container
 }
@@ -24,6 +25,8 @@ func Make() *App {
 	}
 }
 
+// Config is a convenience method around the container's "env"
+// key that makes it easy to retrieve a particular setting.
 func (a *App) Config(domain string, key string) string {
 	env := a.Container.Get("env").(map[string]string)
 

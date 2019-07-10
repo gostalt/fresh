@@ -13,6 +13,7 @@ var rootCmd = &cobra.Command{
 	Long:  "Gostalt is a Go framework",
 }
 
+// Execute is the way in to the interactive CLI portion of the app.
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
