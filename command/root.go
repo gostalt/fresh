@@ -19,8 +19,3 @@ func Execute() {
 		os.Exit(1)
 	}
 }
-
-
-// probably roll own migration stuff:
-// https://bitbucket.org/liamstask/goose/src/master/lib/goose/migration_go.go
-// maybe use a wrapper around goose for now though :(

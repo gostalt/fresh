@@ -3,11 +3,16 @@ package command
 import (
 	"log"
 
-	"bitbucket.org/liamstask/goose/lib/goose"
 	"time"
+
+	"bitbucket.org/liamstask/goose/lib/goose"
 
 	"github.com/spf13/cobra"
 )
+
+// probably roll own migration stuff:
+// https://bitbucket.org/liamstask/goose/src/master/lib/goose/migration_go.go
+// maybe use a wrapper around goose for now though :(
 
 func init() {
 	migrateCmd.AddCommand(migrateCreateCmd)
@@ -23,7 +28,7 @@ var migrateCmd = &cobra.Command{
 var migrateCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new database migration",
-	Args: cobra.ExactArgs(1),
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		name := args[0]
 		f, err := goose.CreateMigration(name, "sql", "./database/migrations", time.Now())
