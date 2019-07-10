@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	"gostalt/app/config"
 	"gostalt/app/services"
 	"net/http"
 	"time"
@@ -28,18 +29,8 @@ func Make() *App {
 // Config is a convenience method around the container's "env"
 // key that makes it easy to retrieve a particular setting.
 func (a *App) Config(domain string, key string) string {
-	env := a.Container.Get("env").(map[string]string)
-
-	// TODO: Rather than hardcoding domains here, register them
-	// a la services.Services and define keys in separate files.
-	// (like Laravel Config).
-	m := map[string]map[string]string{
-		"main": {
-			"address": env["ADDRESS"],
-		},
-	}
-
-	return m[domain][key]
+	cfg := config.Load(a.Container)
+	return cfg[domain][key]
 }
 
 // Run uses the values from the .env file in the root directory
