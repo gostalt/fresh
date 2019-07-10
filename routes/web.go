@@ -14,7 +14,7 @@ func webRoutes(r *mux.Router, container di.Container) {
 
 	// Middleware can be defined on the subrouter, and this
 	// affects all routes then registered.
-	s.Use(middleware.Log)
+	s.Use(middleware.Log, middleware.Varsity)
 
 	views := container.Get("views").(*template.Template)
 
