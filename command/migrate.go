@@ -1,6 +1,7 @@
 package command
 
 import (
+	"gostalt/app"
 	"log"
 
 	"time"
@@ -30,8 +31,11 @@ var migrateCreateCmd = &cobra.Command{
 	Short: "Create a new database migration",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
+		a := app.Make()
+		env := a.Container.Get("env").(map[string]string)
+
 		name := args[0]
-		f, err := goose.CreateMigration(name, "sql", "./database/migrations", time.Now())
+		f, err := goose.CreateMigration(name, "sql", env["MIGRATION_DIR"], time.Now())
 		if err != nil {
 			log.Println(err)
 			return
@@ -45,6 +49,8 @@ var migrateUpCmd = &cobra.Command{
 	Use:   "up",
 	Short: "Run pending migrations",
 	Run: func(cmd *cobra.Command, args []string) {
+		// Ugh, ballache.
+		// TODO: Make dbconf use env variables rather than dnconf.yml
 		conf, err := goose.NewDBConf("database", "development", "")
 		if err != nil {
 			log.Fatalln(err)

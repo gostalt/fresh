@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"gostalt/routes/middleware"
 	"html/template"
 	"net/http"
 
@@ -11,9 +12,14 @@ import (
 func webRoutes(r *mux.Router, container di.Container) {
 	s := r.PathPrefix("/").Subrouter()
 
+	// Middleware can be defined on the subrouter, and this
+	// affects all routes then registered.
+	s.Use(middleware.Log)
+
 	views := container.Get("views").(*template.Template)
 
 	s.
+		// but can middleware be defined on a single route?
 		Methods(http.MethodGet).
 		Path("/hello").
 		HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

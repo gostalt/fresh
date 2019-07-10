@@ -1,6 +1,7 @@
 package services
 
 import (
+	"database/sql"
 	"gostalt/routes"
 	"gostalt/views"
 
@@ -9,6 +10,8 @@ import (
 	"github.com/sarulabs/di"
 )
 
+// Services are items that will be added to the DI Container.
+// The DI Container uses sarulabs/di.
 var Services = []di.Def{
 	{
 		Name: "router",
@@ -28,6 +31,14 @@ var Services = []di.Def{
 		Name: "env",
 		Build: func(c di.Container) (interface{}, error) {
 			return godotenv.Read()
+		},
+	},
+	{
+		Name: "database",
+		Build: func(c di.Container) (interface{}, error) {
+			env := c.Get("env").(map[string]string)
+
+			return sql.Open(env["DB_DRIVER"], env["DB_CONNECTION_STRING"])
 		},
 	},
 }

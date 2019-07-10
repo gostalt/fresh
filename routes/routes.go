@@ -12,6 +12,7 @@ func Load(
 	container di.Container,
 ) {
 	fileServer(router, "/assets/", "./assets")
+
 	apiRoutes(router, container)
 	webRoutes(router, container)
 }
