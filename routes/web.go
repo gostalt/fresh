@@ -13,15 +13,18 @@ func webRoutes(r *mux.Router, container di.Container) {
 	s := r.PathPrefix("/").Subrouter()
 
 	// Middleware can be defined on the subrouter, and this
-	// affects all routes then registered.
-	s.Use(middleware.Log, middleware.Varsity)
+	// affects all routes then registered. Middleware runs
+	// in the order that it is defined below.
+	s.Use(
+		middleware.RequestTimer,
+		middleware.AddURIParametersToRequest,
+	)
 
 	views := container.Get("views").(*template.Template)
 
 	s.
-		// but can middleware be defined on a single route?
 		Methods(http.MethodGet).
-		Path("/hello").
+		Path("/hello/{name}").
 		HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			views.ExecuteTemplate(w, "welcome.html", nil)
 		})
