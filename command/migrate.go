@@ -32,10 +32,9 @@ var migrateCreateCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		a := app.Make()
-		env := a.Container.Get("env").(map[string]string)
 
 		name := args[0]
-		f, err := goose.CreateMigration(name, "sql", env["MIGRATION_DIR"], time.Now())
+		f, err := goose.CreateMigration(name, "sql", a.Config("database", "migration_directory"), time.Now())
 		if err != nil {
 			log.Println(err)
 			return
