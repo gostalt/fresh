@@ -26,3 +26,8 @@ func Load(c di.Container) map[string]map[string]string {
 
 	return cfg
 }
+
+// Get returns the value of a key from a specific domain.
+func Get(domain string, key string) string {
+	return cfg[domain][key]
+}

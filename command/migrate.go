@@ -2,6 +2,7 @@ package command
 
 import (
 	"gostalt/app"
+	"gostalt/app/config"
 	"log"
 
 	"time"
@@ -31,10 +32,10 @@ var migrateCreateCmd = &cobra.Command{
 	Short: "Create a new database migration",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		a := app.Make()
+		app.Make()
 
 		name := args[0]
-		f, err := goose.CreateMigration(name, "sql", a.Config("database", "migration_directory"), time.Now())
+		f, err := goose.CreateMigration(name, "sql", config.Get("database", "migration_directory"), time.Now())
 		if err != nil {
 			log.Println(err)
 			return

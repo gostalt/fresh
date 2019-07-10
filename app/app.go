@@ -21,16 +21,12 @@ func Make() *App {
 	builder, _ := di.NewBuilder()
 	builder.Add(services.Services...)
 
-	return &App{
+	a := &App{
 		Container: builder.Build(),
 	}
-}
 
-// Config is a convenience method around the container's "env"
-// key that makes it easy to retrieve a particular setting.
-func (a *App) Config(domain string, key string) string {
-	cfg := config.Load(a.Container)
-	return cfg[domain][key]
+	config.Load(a.Container)
+	return a
 }
 
 // Run uses the values from the .env file in the root directory
@@ -40,11 +36,11 @@ func (a *App) Run() error {
 
 	srv := &http.Server{
 		Handler:      r,
-		Addr:         a.Config("main", "address"),
+		Addr:         config.Get("main", "address"),
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
 
-	fmt.Printf("Starting web server on %s\n", a.Config("main", "address"))
+	fmt.Printf("Starting web server on %s\n", config.Get("main", "address"))
 	return srv.ListenAndServe()
 }
