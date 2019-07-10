@@ -2,31 +2,27 @@ package services
 
 import (
 	"database/sql"
-	"gostalt/resources/views"
-	"gostalt/routes"
 
-	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 	"github.com/sarulabs/di"
 )
 
+// ServiceProvider defines an interface for providers that need
+// more complex setup.
+type ServiceProvider interface {
+	Register(*di.Builder)
+}
+
+// Providers is a list of ServiceProviders that are registered
+// and booted by the app when it is launched.
+var Providers = []ServiceProvider{
+	&RouteServiceProvider{},
+	&ViewServiceProvider{},
+}
+
 // Services are items that will be added to the DI Container.
 // The DI Container uses sarulabs/di.
 var Services = []di.Def{
-	{
-		Name: "router",
-		Build: func(c di.Container) (interface{}, error) {
-			r := mux.NewRouter()
-			routes.Load(r, c)
-			return r, nil
-		},
-	},
-	{
-		Name: "views",
-		Build: func(c di.Container) (interface{}, error) {
-			return views.Load("resources/views"), nil
-		},
-	},
 	{
 		Name: "env",
 		Build: func(c di.Container) (interface{}, error) {

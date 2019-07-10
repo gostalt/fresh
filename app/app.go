@@ -19,6 +19,11 @@ type App struct {
 // Make creates and instance of our app and fills the Container.
 func Make() *App {
 	builder, _ := di.NewBuilder()
+
+	for _, provider := range services.Providers {
+		provider.Register(builder)
+	}
+
 	builder.Add(services.Services...)
 
 	a := &App{

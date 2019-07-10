@@ -9,14 +9,13 @@ import (
 	"github.com/sarulabs/di"
 )
 
-func webRoutes(r *mux.Router, container di.Container) {
+func WebRoutes(r *mux.Router, container di.Container) {
 	s := r.PathPrefix("/").Subrouter()
 
 	// Middleware can be defined on the subrouter, and this
 	// affects all routes then registered. Middleware runs
 	// in the order that it is defined below.
 	s.Use(
-		middleware.RequestTimer,
 		middleware.AddURIParametersToRequest,
 	)
 

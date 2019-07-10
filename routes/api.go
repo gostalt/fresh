@@ -18,7 +18,7 @@ import (
 // off of the base router, and resolve any dependencies out of
 // the container so that we can use them. You can add additional
 // dependencies in the call to api in routes.go
-func apiRoutes(r *mux.Router, c di.Container) {
+func APIRoutes(r *mux.Router, c di.Container) {
 	s := r.PathPrefix("/api").Subrouter()
 
 	// Here is the first route for the application. At the moment
