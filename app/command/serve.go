@@ -10,7 +10,6 @@ import (
 var serveCmd = &cobra.Command{
 	Use:   "serve",
 	Short: "Starts the Gostalt framework",
-	Long:  "Runs the Gostalt framework on the address specified in the .env file",
 	Run: func(cmd *cobra.Command, args []string) {
 		app.Make().Run()
 	},

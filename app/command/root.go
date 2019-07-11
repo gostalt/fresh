@@ -10,7 +10,6 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "gostalt",
 	Short: "Gostalt is a Go framework",
-	Long:  "Gostalt is a Go framework",
 }
 
 // Execute is the way in to the interactive CLI portion of the app.
