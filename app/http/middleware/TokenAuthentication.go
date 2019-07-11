@@ -14,6 +14,7 @@ func (mw TokenAuthentication) Handle(next http.Handler) http.Handler {
 			for _, v := range mw.Valid {
 				if token == v {
 					next.ServeHTTP(w, r)
+					return
 				}
 			}
 
