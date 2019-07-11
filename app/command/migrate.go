@@ -4,7 +4,6 @@ import (
 	"gostalt/app"
 	"gostalt/config"
 	"log"
-
 	"time"
 
 	"bitbucket.org/liamstask/goose/lib/goose"

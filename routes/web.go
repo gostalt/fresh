@@ -25,6 +25,6 @@ func WebRoutes(r *mux.Router, container di.Container) {
 		Methods(http.MethodGet).
 		Path("/hello/{name}").
 		HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			views.ExecuteTemplate(w, "welcome.html", nil)
+			views.ExecuteTemplate(w, "welcome", nil)
 		})
 }

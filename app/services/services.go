@@ -23,6 +23,7 @@ var Providers = []ServiceProvider{
 // Services are items that will be added to the DI Container.
 // The DI Container uses sarulabs/di.
 var Services = []di.Def{
+	// TODO: env needs to be booted earlier in the request cycle, and probably not in the container.
 	{
 		Name: "env",
 		Build: func(c di.Container) (interface{}, error) {
