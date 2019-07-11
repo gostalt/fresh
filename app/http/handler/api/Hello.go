@@ -18,10 +18,6 @@ type Hello struct{}
 // ServeHTTP is called on a Handler when the route is is registered
 // against is called.
 func (h Hello) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	// Here, we add a header so that the content returned is
-	// formatted as JSON.
-	w.Header().Set("Content-Type", "application/json")
-
 	greeting := make(map[string]string)
 	greeting["greeting"] = fmt.Sprintf("Hello, %s!", config.Get("main", "app_name"))
 

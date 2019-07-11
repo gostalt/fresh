@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"gostalt/app/http/handler/api"
+	"gostalt/app/http/middleware"
 
 	"github.com/gorilla/mux"
 	"github.com/sarulabs/di"
@@ -20,6 +21,8 @@ import (
 // dependencies in the call to api in routes.go
 func APIRoutes(r *mux.Router, c di.Container) {
 	s := r.PathPrefix("/api").Subrouter()
+
+	s.Use(middleware.JSONHeader)
 
 	// Here is the first route for the application. At the moment
 	// this is just calling Gorilla's Mux behind the scenes, so
