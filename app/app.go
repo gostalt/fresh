@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"gostalt/app/services"
 	"gostalt/config"
+	"log"
 	"net/http"
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 	"github.com/sarulabs/di"
 )
 
@@ -18,6 +20,13 @@ type App struct {
 
 // Make creates and instance of our app and fills the Container.
 func Make() *App {
+	env, err := godotenv.Read()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	config.Load(env)
+
 	builder, _ := di.NewBuilder()
 
 	for _, provider := range services.Providers {
@@ -27,8 +36,6 @@ func Make() *App {
 	a := &App{
 		Container: builder.Build(),
 	}
-
-	config.Load(a.Container)
 	return a
 }
 
@@ -39,11 +46,11 @@ func (a *App) Run() error {
 
 	srv := &http.Server{
 		Handler:      r,
-		Addr:         config.Get("main", "address"),
+		Addr:         config.Get("app", "address"),
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
 
-	fmt.Printf("Starting web server on %s\n", config.Get("main", "address"))
+	fmt.Printf("Starting web server on %s\n", config.Get("app", "address"))
 	return srv.ListenAndServe()
 }

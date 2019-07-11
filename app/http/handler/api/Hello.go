@@ -19,7 +19,7 @@ type Hello struct{}
 // against is called.
 func (h Hello) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	greeting := make(map[string]string)
-	greeting["greeting"] = fmt.Sprintf("Hello, %s!", config.Get("main", "app_name"))
+	greeting["greeting"] = fmt.Sprintf("Hello from %s!", config.Get("app", "name"))
 
 	// The variable is marshalled into a slice of bytes, which
 	// we can pass to the Write function on the ResponseWriter.

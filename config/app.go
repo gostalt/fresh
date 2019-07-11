@@ -2,8 +2,8 @@ package config
 
 func app(env map[string]string) map[string]string {
 	return map[string]string{
-		// App Name is the name of your app.
-		"app_name": env["APP_NAME"],
+		// Name is the name of your app.
+		"name": env["APP_NAME"],
 
 		// Environment dictates the "enviroment" that the app is
 		// running in. This can be used to configure services

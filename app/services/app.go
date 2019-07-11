@@ -3,7 +3,6 @@ package services
 import (
 	"database/sql"
 
-	"github.com/joho/godotenv"
 	"github.com/sarulabs/di"
 )
 
@@ -13,12 +12,6 @@ import (
 type AppServiceProvider struct{}
 
 var services = []di.Def{
-	{
-		Name: "env",
-		Build: func(c di.Container) (interface{}, error) {
-			return godotenv.Read()
-		},
-	},
 	{
 		Name: "database",
 		Build: func(c di.Container) (interface{}, error) {
