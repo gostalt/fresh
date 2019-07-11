@@ -32,9 +32,7 @@ var services = []di.Def{
 		Name: "TokenAuthentication",
 		Build: func(c di.Container) (interface{}, error) {
 			mw := middleware.TokenAuthentication{
-				Valid: []string{
-					"Bearer Tomy",
-				},
+				DB: c.Get("database").(*sql.DB),
 			}
 
 			return mw, nil

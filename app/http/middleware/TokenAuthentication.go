@@ -1,9 +1,13 @@
 package middleware
 
-import "net/http"
+import (
+	"database/sql"
+	"log"
+	"net/http"
+)
 
 type TokenAuthentication struct {
-	Valid []string
+	DB *sql.DB
 }
 
 func (mw TokenAuthentication) Handle(next http.Handler) http.Handler {
@@ -11,14 +15,27 @@ func (mw TokenAuthentication) Handle(next http.Handler) http.Handler {
 		func(w http.ResponseWriter, r *http.Request) {
 			token := r.Header.Get("Authorization")
 
-			for _, v := range mw.Valid {
-				if token == v {
-					next.ServeHTTP(w, r)
-					return
-				}
+			stmt, err := mw.DB.Prepare("SELECT id FROM tokens WHERE token = $1")
+			if err != nil {
+				w.WriteHeader(http.StatusUnauthorized)
+				log.Println(err)
+				return
+			}
+			usr := stmt.QueryRow(token)
+			var id int
+			if err := usr.Scan(&id); err != nil {
+				w.WriteHeader(http.StatusUnauthorized)
+				log.Println(err)
+				return
 			}
 
-			w.WriteHeader(http.StatusUnauthorized)
+			if id == 0 {
+				w.WriteHeader(http.StatusUnauthorized)
+				log.Println(err)
+				return
+			}
+
+			next.ServeHTTP(w, r)
 		},
 	)
 }
