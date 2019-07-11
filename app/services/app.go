@@ -3,6 +3,7 @@ package services
 import (
 	"database/sql"
 	"gostalt/app/http/middleware"
+	"gostalt/config"
 
 	"github.com/sarulabs/di"
 )
@@ -16,9 +17,15 @@ var services = []di.Def{
 	{
 		Name: "database",
 		Build: func(c di.Container) (interface{}, error) {
-			env := c.Get("env").(map[string]string)
+			db, err := sql.Open(config.Get("database", "driver"), config.Get("database", "string"))
+			if err != nil {
+				panic(err)
+			}
+			if err := db.Ping(); err != nil {
+				panic(err)
+			}
 
-			return sql.Open(env["DB_DRIVER"], env["DB_CONNECTION_STRING"])
+			return db, nil
 		},
 	},
 	{

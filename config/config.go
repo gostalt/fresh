@@ -11,7 +11,8 @@ func Load(env map[string]string) map[string]map[string]string {
 	}
 
 	cfg = map[string]map[string]string{
-		"app": app(env),
+		"app":      app(env),
+		"database": database(env),
 	}
 
 	return cfg
