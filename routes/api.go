@@ -30,7 +30,7 @@ func APIRoutes(r *mux.Router, c di.Container) {
 	s.
 		Methods(http.MethodGet).
 		Path("/welcome").
-		Handler(api.Hello{})
+		HandlerFunc(api.Hello)
 
 	// ...
 }
