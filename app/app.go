@@ -24,8 +24,6 @@ func Make() *App {
 		provider.Register(builder)
 	}
 
-	builder.Add(services.Services...)
-
 	a := &App{
 		Container: builder.Build(),
 	}
