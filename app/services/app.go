@@ -2,6 +2,7 @@ package services
 
 import (
 	"database/sql"
+	"gostalt/app/http/middleware"
 
 	"github.com/sarulabs/di"
 )
@@ -18,6 +19,18 @@ var services = []di.Def{
 			env := c.Get("env").(map[string]string)
 
 			return sql.Open(env["DB_DRIVER"], env["DB_CONNECTION_STRING"])
+		},
+	},
+	{
+		Name: "TokenAuthentication",
+		Build: func(c di.Container) (interface{}, error) {
+			mw := middleware.TokenAuthentication{
+				Valid: []string{
+					"Bearer Tomy",
+				},
+			}
+
+			return mw, nil
 		},
 	},
 }

@@ -22,7 +22,11 @@ import (
 func APIRoutes(r *mux.Router, c di.Container) {
 	s := r.PathPrefix("/api").Subrouter()
 
-	s.Use(middleware.JSONHeader)
+	s.Use(
+		middleware.JSONHeader,
+		// TODO: This is ok, but messy.
+		c.Get("TokenAuthentication").(middleware.TokenAuthentication).Handle,
+	)
 
 	// Here is the first route for the application. At the moment
 	// this is just calling Gorilla's Mux behind the scenes, so
