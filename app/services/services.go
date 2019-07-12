@@ -14,6 +14,7 @@ type ServiceProvider interface {
 // and booted by the app when it is launched.
 var Providers = []ServiceProvider{
 	&AppServiceProvider{},
+	&TLSServiceProvider{},
 	&RouteServiceProvider{},
 	&ViewServiceProvider{},
 }

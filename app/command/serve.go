@@ -11,7 +11,7 @@ var serveCmd = &cobra.Command{
 	Use:   "serve",
 	Short: "Starts the Gostalt framework",
 	Run: func(cmd *cobra.Command, args []string) {
-		app.Make().Run()
+		panic(app.Make().Run())
 	},
 }
 
