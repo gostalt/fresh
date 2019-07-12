@@ -8,4 +8,4 @@ CREATE TABLE tokens (
 
 -- +goose Down
 -- SQL section 'Down' is executed when this migration is rolled back
-DROP TABLE tokens
+DROP TABLE tokens;
