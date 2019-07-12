@@ -5,6 +5,9 @@ import (
 	"gostalt/app/http/middleware"
 	"gostalt/config"
 
+	// Import the postgres driver for the database.
+	_ "github.com/lib/pq"
+
 	"github.com/sarulabs/di"
 )
 
