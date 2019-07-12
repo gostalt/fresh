@@ -1,10 +1,9 @@
 package services
 
 import (
-	"net/http"
 	"gostalt/app/http/middleware"
 	"gostalt/routes"
-	"log"
+	"net/http"
 
 	"github.com/gorilla/mux"
 	"github.com/sarulabs/di"
@@ -44,6 +43,4 @@ func (p RouteServiceProvider) Register(b *di.Builder) {
 			return r, nil
 		},
 	})
-
-	log.Println("booted route service provider")
 }
