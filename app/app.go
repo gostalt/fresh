@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"gostalt/app/services"
 	"gostalt/config"
-	"log"
 	"net/http"
 	"time"
 
@@ -18,29 +17,34 @@ type App struct {
 	Container di.Container
 }
 
-// Make creates and instance of our app and fills the Container.
+// Make creates an instance of our app and fills the Container
+// using the ServiceProviders defined in services.Providers.
 func Make() *App {
-	env, err := godotenv.Read()
-	if err != nil {
-		log.Fatalln(err)
+	// Load the .env file into the app, and use it to populate
+	// the different config domains defined in `./config`.
+	if env, err := godotenv.Read(); err != nil {
+		panic("unable to load environment")
+	} else {
+		config.Load(env)
 	}
 
-	config.Load(env)
-
-	builder, _ := di.NewBuilder()
+	// Create a new builder that will be used to populated and
+	// used to create the app dependency injection container.
+	builder, err := di.NewBuilder()
+	if err != nil {
+		panic("unable to create di builder")
+	}
 
 	for _, provider := range services.Providers {
 		provider.Register(builder)
 	}
 
-	a := &App{
+	return &App{
 		Container: builder.Build(),
 	}
-	return a
 }
 
-// Run uses the values from the .env file in the root directory
-// to start the server.
+// Run uses the configured App to start a Web Server.
 func (a *App) Run() error {
 	r := a.Container.Get("router").(*mux.Router)
 
