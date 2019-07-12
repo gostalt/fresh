@@ -8,6 +8,7 @@ require (
 	github.com/gorilla/mux v1.7.3
 
 	github.com/joho/godotenv v1.3.0
+	github.com/kabukky/httpscerts v0.0.0-20150320125433-617593d7dcb3
 	github.com/kylelemons/go-gypsy v0.0.0-20160905020020-08cad365cd28 // indirect
 	github.com/lib/pq v1.1.1
 	github.com/mattn/go-sqlite3 v1.10.0 // indirect

@@ -56,5 +56,8 @@ func (a *App) Run() error {
 	}
 
 	fmt.Printf("Starting web server on %s\n", config.Get("app", "address"))
-	return srv.ListenAndServe()
+	return srv.ListenAndServeTLS(
+		config.Get("app", "certificate_directory")+"/cert.pem",
+		config.Get("app", "certificate_directory")+"/key.pem",
+	)
 }

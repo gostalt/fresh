@@ -14,5 +14,10 @@ func app(env map[string]string) map[string]string {
 		// localhost value, but this should be changed for an
 		// app that is running in production.
 		"address": env["ADDRESS"],
+
+		// Certificate directory is the folder, relative to the
+		// project root, that certificates should be stored in
+		// when using TLS to serve the app locally.
+		"certificate_directory": "./storage/certs",
 	}
 }
