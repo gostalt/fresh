@@ -3,6 +3,9 @@ package services
 import (
 	"database/sql"
 	"gostalt/app/http/middleware"
+	"gostalt/config"
+	"io"
+	"io/ioutil"
 	"log"
 	"os"
 
@@ -31,16 +34,13 @@ var services = []di.Def{
 	{
 		Name: "logger",
 		Build: func(c di.Container) (interface{}, error) {
-			f, err := os.OpenFile("./storage/logs/eg.log", os.O_RDWR|os.O_APPEND|os.O_CREATE, 0666)
-			if err != nil {
-				log.Fatalln(err)
-			}
+			logWriter := getLogWriter()
 
 			return jww.NewNotepad(
 				jww.LevelInfo,
 				jww.LevelTrace,
 				os.Stdout,
-				f,
+				logWriter,
 				"",
 				log.Ldate|log.Ltime,
 			), nil
@@ -52,4 +52,19 @@ var services = []di.Def{
 // build definition.
 func (p AppServiceProvider) Register(b *di.Builder) {
 	b.Add(services...)
+}
+
+func getLogWriter() io.Writer {
+	logType := config.Get("log", "type")
+
+	switch logType {
+	case "file":
+		f, err := os.OpenFile("./storage/logs/eg.log", os.O_RDWR|os.O_APPEND|os.O_CREATE, 0666)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		return f
+	default:
+		return ioutil.Discard
+	}
 }
