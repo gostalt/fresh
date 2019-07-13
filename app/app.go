@@ -40,6 +40,10 @@ func Make() *App {
 		provider.Register(builder)
 	}
 
+	for _, provider := range services.Providers {
+		provider.Boot()
+	}
+
 	return &App{
 		Container: builder.Build(),
 	}

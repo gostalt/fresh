@@ -11,7 +11,9 @@ import (
 	"github.com/sarulabs/di"
 )
 
-type ViewServiceProvider struct{}
+type ViewServiceProvider struct {
+	BaseServiceProvider
+}
 
 // path is the directory, relative to the project root, that the
 // view files will be loaded from. It is walked recursively.

@@ -9,7 +9,9 @@ import (
 	"github.com/sarulabs/di"
 )
 
-type RouteServiceProvider struct{}
+type RouteServiceProvider struct {
+	BaseServiceProvider
+}
 
 // globalMiddlewareStack defines a middleware stack for the base
 // router of the application. These middleware are ran in the

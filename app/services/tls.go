@@ -10,7 +10,9 @@ import (
 	"golang.org/x/crypto/acme/autocert"
 )
 
-type TLSServiceProvider struct{}
+type TLSServiceProvider struct {
+	BaseServiceProvider
+}
 
 // certificateDirectory returns the path of a file in the config
 // `certificate_directory` property.
