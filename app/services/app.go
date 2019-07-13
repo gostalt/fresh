@@ -3,8 +3,11 @@ package services
 import (
 	"database/sql"
 	"gostalt/app/http/middleware"
+	"log"
+	"os"
 
 	"github.com/sarulabs/di"
+	jww "github.com/spf13/jwalterweatherman"
 )
 
 // AppServiceProvider is a more generic ServiceProvider that you
@@ -23,6 +26,24 @@ var services = []di.Def{
 			}
 
 			return mw, nil
+		},
+	},
+	{
+		Name: "logger",
+		Build: func(c di.Container) (interface{}, error) {
+			f, err := os.OpenFile("./storage/logs/eg.log", os.O_RDWR|os.O_APPEND|os.O_CREATE, 0666)
+			if err != nil {
+				log.Fatalln(err)
+			}
+
+			return jww.NewNotepad(
+				jww.LevelInfo,
+				jww.LevelTrace,
+				os.Stdout,
+				f,
+				"",
+				log.Ldate|log.Ltime,
+			), nil
 		},
 	},
 }

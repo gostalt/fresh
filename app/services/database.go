@@ -8,6 +8,7 @@ import (
 	_ "github.com/lib/pq"
 
 	"github.com/sarulabs/di"
+	jww "github.com/spf13/jwalterweatherman"
 )
 
 type DatabaseServiceProvider struct {
@@ -29,4 +30,9 @@ func (p DatabaseServiceProvider) Register(b *di.Builder) {
 			return db, nil
 		},
 	})
+}
+
+func (p DatabaseServiceProvider) Boot(c di.Container) {
+	logger := c.Get("logger").(*jww.Notepad)
+	logger.INFO.Println("Database booted")
 }

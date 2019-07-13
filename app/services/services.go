@@ -10,7 +10,7 @@ import (
 // more complex setup.
 type ServiceProvider interface {
 	Register(*di.Builder)
-	Boot()
+	Boot(di.Container)
 }
 
 // Providers is a list of ServiceProviders that are registered
@@ -25,6 +25,6 @@ var Providers = []ServiceProvider{
 
 type BaseServiceProvider struct{}
 
-func (p BaseServiceProvider) Boot() {
+func (p BaseServiceProvider) Boot(c di.Container) {
 	log.Println("booting provider")
 }

@@ -40,13 +40,15 @@ func Make() *App {
 		provider.Register(builder)
 	}
 
-	for _, provider := range services.Providers {
-		provider.Boot()
-	}
-
-	return &App{
+	app := &App{
 		Container: builder.Build(),
 	}
+
+	for _, provider := range services.Providers {
+		provider.Boot(app.Container)
+	}
+
+	return app
 }
 
 // Run uses the configured App to start a Web Server.
