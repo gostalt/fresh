@@ -1,7 +1,7 @@
 package app
 
 import (
-	"fmt"
+	"crypto/tls"
 	"gostalt/app/services"
 	"gostalt/config"
 	"net/http"
@@ -10,6 +10,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 	"github.com/sarulabs/di"
+	"golang.org/x/crypto/acme/autocert"
 )
 
 // App is where the magic happens.
@@ -46,16 +47,28 @@ func Make() *App {
 
 // Run uses the configured App to start a Web Server.
 func (a *App) Run() error {
-	r := a.Container.Get("router").(*mux.Router)
-
 	srv := &http.Server{
-		Handler:      r,
+		Handler:      a.Container.Get("router").(*mux.Router),
 		Addr:         config.Get("app", "address"),
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
+		IdleTimeout:  120 * time.Second,
 	}
 
-	fmt.Printf("Starting web server on %s\n", config.Get("app", "address"))
+	if config.Get("app", "environment") == "production" {
+		le := a.Container.Get("autocert").(*autocert.Manager)
+		srv.TLSConfig = &tls.Config{GetCertificate: le.GetCertificate}
+
+		// In production, the server address should just be 443.
+		srv.Addr = ":443"
+
+		// A non-TLS ListenAndServe is used here so Let's Encrypt
+		// can use HTTP Challenge to make a new certificate.
+		go http.ListenAndServe(":80", le.HTTPHandler(nil))
+
+		return srv.ListenAndServeTLS("", "")
+	}
+
 	return srv.ListenAndServeTLS(
 		config.Get("app", "certificate_directory")+"/cert.pem",
 		config.Get("app", "certificate_directory")+"/key.pem",

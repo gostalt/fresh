@@ -13,11 +13,25 @@ func app(env map[string]string) map[string]string {
 		// Address is the URL. Locally, this is likely to be a
 		// localhost value, but this should be changed for an
 		// app that is running in production.
-		"address": env["ADDRESS"],
+		"address": getAddress(env),
+
+		// Host is separate from the address in that it does not
+		// and should not contain a port.
+		"host": env["HOST"],
 
 		// Certificate directory is the folder, relative to the
 		// project root, that certificates should be stored in
 		// when using TLS to serve the app locally.
 		"certificate_directory": "./storage/certs",
 	}
+}
+
+func getAddress(env map[string]string) string {
+	address := env["HOST"]
+
+	if env["PORT"] != "" {
+		address = address + ":" + env["PORT"]
+	}
+
+	return address
 }
