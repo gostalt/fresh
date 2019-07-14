@@ -21,6 +21,7 @@ var Providers = []ServiceProvider{
 	&TLSServiceProvider{},
 	&RouteServiceProvider{},
 	&ViewServiceProvider{},
+	&LoggingServiceProvider{},
 }
 
 type BaseServiceProvider struct{}
