@@ -1,8 +1,6 @@
 package services
 
 import (
-	"log"
-
 	"github.com/sarulabs/di"
 )
 
@@ -22,10 +20,10 @@ var Providers = []ServiceProvider{
 	&RouteServiceProvider{},
 	&ViewServiceProvider{},
 	&LoggingServiceProvider{},
+	&SchedulerServiceProvider{},
 }
 
 type BaseServiceProvider struct{}
 
 func (p BaseServiceProvider) Boot(c di.Container) {
-	log.Println("booting provider")
 }

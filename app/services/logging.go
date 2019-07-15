@@ -20,7 +20,6 @@ func (p LoggingServiceProvider) Register(b *di.Builder) {
 	b.Add(di.Def{
 		Name: "logger",
 		Build: func(c di.Container) (interface{}, error) {
-			log.Println("getting log writer")
 			logWriter := p.getLogWriter()
 
 			return jww.NewNotepad(
