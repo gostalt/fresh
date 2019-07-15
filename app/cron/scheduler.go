@@ -1,23 +1,21 @@
 package cron
 
 import (
-	"github.com/sarulabs/di"
 	jww "github.com/spf13/jwalterweatherman"
 )
 
 type Scheduler struct {
-	Logger    *jww.Notepad
-	jobs      []Jobber
-	Container di.Container
+	Logger *jww.Notepad
+	jobs   []Jobber
 }
 
 func (s *Scheduler) Run() {
 	s.Logger.INFO.Println("running scheduler")
 
 	for i, j := range s.jobs {
-		if j.ShouldFire(s.Container) {
+		if j.ShouldFire() {
 			s.Logger.INFO.Printf("Running job %d", i)
-			j.Handle(s.Container)
+			j.Handle()
 		}
 	}
 }

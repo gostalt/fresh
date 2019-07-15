@@ -16,22 +16,30 @@ func (p SchedulerServiceProvider) Register(b *di.Builder) {
 	b.Add(di.Def{
 		Name: "scheduler",
 		Build: func(c di.Container) (interface{}, error) {
-			logger := c.Get("logger").(*jww.Notepad)
-
+			l := c.Get("logger").(*jww.Notepad)
 			// Scheduled jobs should just print to STDOUT for now.
 			// TODO: Remove this - maybe have a separate log for
 			// scheduled jobs?
-			logger.SetLogOutput(os.Stdout)
+			l.SetLogOutput(os.Stdout)
 
 			s := &cron.Scheduler{
-				Logger:    logger,
-				Container: c,
+				Logger: l,
 			}
 
-			// Should loop through the jobs and add them here.
-			s.Add(cron.SayHello{})
+			// TODO: Here is where jobs should be added to the scheduler.
+			sh := c.Get("hello-scheduled").(cron.Jobber)
+			s.Add(sh)
 
 			return s, nil
+		},
+	})
+
+	b.Add(di.Def{
+		Name: "hello-scheduled",
+		Build: func(c di.Container) (interface{}, error) {
+			l := c.Get("logger").(*jww.Notepad)
+			h := cron.MakeSayHello(l)
+			return h, nil
 		},
 	})
 }

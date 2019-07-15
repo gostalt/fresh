@@ -3,26 +3,31 @@ package cron
 import (
 	"time"
 
-	"github.com/sarulabs/di"
 	jww "github.com/spf13/jwalterweatherman"
 )
 
 type Jobber interface {
-	Handle(di.Container) error
-	ShouldFire(di.Container) bool
+	Handle() error
+	ShouldFire() bool
 }
 
-type SayHello struct{}
+type SayHello struct {
+	logger *jww.Notepad
+}
 
-func (SayHello) Handle(c di.Container) error {
-	l := c.Get("logger").(*jww.Notepad)
+func MakeSayHello(l *jww.Notepad) *SayHello {
+	return &SayHello{
+		logger: l,
+	}
+}
 
-	l.INFO.Println("Hello!")
+func (s SayHello) Handle() error {
+	s.logger.INFO.Println("Hello!")
 
 	return nil
 }
 
-func (SayHello) ShouldFire(c di.Container) bool {
+func (SayHello) ShouldFire() bool {
 	if time.Now().Minute() == 0 {
 		return true
 	}
