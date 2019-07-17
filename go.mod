@@ -14,5 +14,8 @@ require (
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/jwalterweatherman v1.1.0
 	github.com/stretchr/objx v0.2.0 // indirect
+	github.com/tmus/logger v0.0.0
 	golang.org/x/crypto v0.0.0-20181203042331-505ab145d0a9
 )
+
+replace github.com/tmus/logger => ../logger-interface

@@ -1,20 +1,23 @@
 package cron
 
 import (
-	jww "github.com/spf13/jwalterweatherman"
+	"fmt"
+
+	"github.com/tmus/logger"
 )
 
 type Scheduler struct {
-	Logger *jww.Notepad
+	Logger logger.Logger
 	jobs   []Jobber
 }
 
 func (s *Scheduler) Run() {
-	s.Logger.INFO.Println("running scheduler")
+	s.Logger.Info([]byte("Running scheduler"))
 
 	for i, j := range s.jobs {
 		if j.ShouldFire() {
-			s.Logger.INFO.Printf("Running job %d", i)
+			p := fmt.Sprintf("Running job %d", i)
+			s.Logger.Info([]byte(p))
 			j.Handle()
 		}
 	}

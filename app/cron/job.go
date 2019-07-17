@@ -3,7 +3,7 @@ package cron
 import (
 	"time"
 
-	jww "github.com/spf13/jwalterweatherman"
+	"github.com/tmus/logger"
 )
 
 type Jobber interface {
@@ -12,17 +12,17 @@ type Jobber interface {
 }
 
 type SayHello struct {
-	logger *jww.Notepad
+	logger logger.Logger
 }
 
-func MakeSayHello(l *jww.Notepad) *SayHello {
+func MakeSayHello(l logger.Logger) *SayHello {
 	return &SayHello{
 		logger: l,
 	}
 }
 
 func (s SayHello) Handle() error {
-	s.logger.INFO.Println("Hello!")
+	s.logger.Info([]byte("Hello!"))
 
 	return nil
 }

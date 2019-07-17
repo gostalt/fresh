@@ -6,9 +6,9 @@ import (
 
 	// Import the postgres driver for the database.
 	_ "github.com/lib/pq"
+	"github.com/tmus/logger"
 
 	"github.com/sarulabs/di"
-	jww "github.com/spf13/jwalterweatherman"
 )
 
 type DatabaseServiceProvider struct {
@@ -33,6 +33,6 @@ func (p DatabaseServiceProvider) Register(b *di.Builder) {
 }
 
 func (p DatabaseServiceProvider) Boot(c di.Container) {
-	logger := c.Get("logger").(*jww.Notepad)
-	logger.INFO.Println("Database booted")
+	logger := c.Get("logger").(logger.Logger)
+	logger.Debug([]byte("Database booted"))
 }

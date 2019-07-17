@@ -1,15 +1,12 @@
 package services
 
 import (
+	"fmt"
 	"gostalt/config"
-	"io"
-	"io/ioutil"
-	"log"
 	"os"
-	"time"
 
 	"github.com/sarulabs/di"
-	jww "github.com/spf13/jwalterweatherman"
+	"github.com/tmus/logger"
 )
 
 type LoggingServiceProvider struct {
@@ -20,62 +17,63 @@ func (p LoggingServiceProvider) Register(b *di.Builder) {
 	b.Add(di.Def{
 		Name: "logger",
 		Build: func(c di.Container) (interface{}, error) {
-			logWriter := p.getLogWriter()
-
-			return jww.NewNotepad(
-				jww.LevelInfo,
-				jww.LevelTrace,
-				ioutil.Discard,
-				logWriter,
-				config.Get("app", "name"),
-				log.Ldate|log.Ltime,
-			), nil
+			var logger logger.Logger
+			logger = p.getLogger(c)
+			return logger, nil
 		},
 	})
 }
 
-func (p LoggingServiceProvider) getLogWriter() (f io.Writer) {
+func (p LoggingServiceProvider) getLogger(c di.Container) (l logger.Logger) {
 	logType := config.Get("logging", "driver")
 
 	switch logType {
-	case "single":
-		f = p.singleLog()
-	case "daily":
-		f = p.dailyLog()
-	case "stdout":
-		f = os.Stdout
 	default:
-		f = ioutil.Discard
+		l = StdOutLogger{}
 	}
 
 	return
 }
 
-// singleLog returns a file that all logs are saved to. The file
-// is not recreated or truncated—it is added to with each log.
-func (p LoggingServiceProvider) singleLog() io.Writer {
-	return p.fileLog("gostalt")
+type StdOutLogger struct{}
+
+func (l StdOutLogger) Alert(p []byte) {
+	l.log("Alert", p)
 }
 
-// TODO: This doesn't really work at the moment - it creates a
-// log file for the date in question when the app is created,
-// as a one time operation: needs to be checked at log time.
-func (p LoggingServiceProvider) dailyLog() io.Writer {
-	date := time.Now().Format("2006-02-01")
-	return p.fileLog(date + "-gostalt")
+func (l StdOutLogger) Critical(p []byte) {
+	l.log("Critical", p)
 }
 
-func (p LoggingServiceProvider) fileLog(name string) (f io.Writer) {
-	logDir := config.Get("logging", "dir")
+func (l StdOutLogger) Debug(p []byte) {
+	l.log("Debug", p)
+}
 
-	f, err := os.OpenFile(
-		logDir+name+".log",
-		os.O_RDWR|os.O_APPEND|os.O_CREATE,
-		0666,
+func (l StdOutLogger) Emergency(p []byte) {
+	l.log("Emergency", p)
+}
+
+func (l StdOutLogger) Error(p []byte) {
+	l.log("Error", p)
+}
+
+func (l StdOutLogger) Info(p []byte) {
+	l.log("Info", p)
+}
+
+func (l StdOutLogger) Notice(p []byte) {
+	l.log("Notice", p)
+}
+
+func (l StdOutLogger) Warning(p []byte) {
+	l.log("Warning", p)
+}
+
+func (l StdOutLogger) log(level string, p []byte) {
+	fmt.Fprintf(
+		os.Stdout,
+		"%s: %s\n",
+		level,
+		p,
 	)
-	if err != nil {
-		panic("unable to use `single` log driver")
-	}
-
-	return
 }

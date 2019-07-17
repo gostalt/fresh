@@ -2,10 +2,9 @@ package services
 
 import (
 	"gostalt/app/cron"
-	"os"
 
 	"github.com/sarulabs/di"
-	jww "github.com/spf13/jwalterweatherman"
+	"github.com/tmus/logger"
 )
 
 type SchedulerServiceProvider struct {
@@ -16,11 +15,10 @@ func (p SchedulerServiceProvider) Register(b *di.Builder) {
 	b.Add(di.Def{
 		Name: "scheduler",
 		Build: func(c di.Container) (interface{}, error) {
-			l := c.Get("logger").(*jww.Notepad)
+			l := c.Get("logger").(logger.Logger)
 			// Scheduled jobs should just print to STDOUT for now.
 			// TODO: Remove this - maybe have a separate log for
 			// scheduled jobs?
-			l.SetLogOutput(os.Stdout)
 
 			s := &cron.Scheduler{
 				Logger: l,
@@ -37,7 +35,7 @@ func (p SchedulerServiceProvider) Register(b *di.Builder) {
 	b.Add(di.Def{
 		Name: "hello-scheduled",
 		Build: func(c di.Container) (interface{}, error) {
-			l := c.Get("logger").(*jww.Notepad)
+			l := c.Get("logger").(logger.Logger)
 			h := cron.MakeSayHello(l)
 			return h, nil
 		},
