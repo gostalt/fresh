@@ -6,7 +6,7 @@ import (
 
 	// Import the postgres driver for the database.
 	_ "github.com/lib/pq"
-	"github.com/tmus/logger"
+	"github.com/gostalt/logger"
 
 	"github.com/sarulabs/di"
 )

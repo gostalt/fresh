@@ -3,7 +3,7 @@ package cron
 import (
 	"time"
 
-	"github.com/tmus/logger"
+	"github.com/gostalt/logger"
 )
 
 type Jobber interface {

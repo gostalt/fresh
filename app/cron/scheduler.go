@@ -3,7 +3,7 @@ package cron
 import (
 	"fmt"
 
-	"github.com/tmus/logger"
+	"github.com/gostalt/logger"
 )
 
 type Scheduler struct {

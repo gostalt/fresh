@@ -4,7 +4,7 @@ import (
 	"gostalt/app/cron"
 
 	"github.com/sarulabs/di"
-	"github.com/tmus/logger"
+	"github.com/gostalt/logger"
 )
 
 type SchedulerServiceProvider struct {

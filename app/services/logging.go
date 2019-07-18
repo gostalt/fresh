@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/sarulabs/di"
-	"github.com/tmus/logger"
+	"github.com/gostalt/logger"
 )
 
 type LoggingServiceProvider struct {
