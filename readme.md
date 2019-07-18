@@ -109,10 +109,60 @@ to the Request's `Form` field.
 This adds a header of `Content-Type: application/json` to every
 route in the api subrouter.
 
-Easily add global middleware to the application, and create 'subrouters'
-with their own prefixes and middleware stack using `gorilla/mux`.
+### Migrations
 
-- Automatic Let's Encrypt certificate generation.
-- SQL Migrations built in.
-- Console command extensibility using spf13/cobra.
+Gostalt uses the `pressly/goose` library for creating, running
+and managing migrations.
+
+To create a new migration, run `gostalt migrate create <name>`.
+This will generate a migration in the `/database/migrations/`
+directory. You should fill this migration with the desired `up`
+and `down` commands for the migration, i.e., a creation and a
+reversal.
+
+To run all pending migrations, run `gostalt migrate up`. This
+will gather the migrations that have not been executed and run
+them against the database defined in `/config/database.go`.
+
+### Commands
+
+When you're ready to run your app, run `gostalt serve`. You'll
+be able to visit the address defined in `/config/app.go`.
+
+`serve`, along with `migrate`, is a cobra command. You are free
+to register additional commands by creating a command and adding
+it to the `rootCmd`:
+
+```go
+// app/command/greet.go
+
+package command
+
+import (
+	"gostalt/app"
+
+	"github.com/spf13/cobra"
+)
+
+// serveCmd builds our app and runs it.
+var greet = &cobra.Command{
+	Use:   "greet",
+	Short: "Greet the user",
+	Run: func(cmd *cobra.Command, args []string) {
+        // If you need to access config or resolve an item from
+        // the DI Container, you can Make() the app here.
+        a := app.Make()
+        name := config.Get("app", "name")
+
+        fmt.Printf("Hello from %s!\n", name)
+        // Hello from Gostalt!
+	},
+}
+
+func init() {
+	rootCmd.AddCommand(greet)
+}
+```
+
 - Scheduling.
+- Automatic Let's Encrypt certificate generation.
