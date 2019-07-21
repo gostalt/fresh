@@ -36,5 +36,10 @@ func APIRoutes(r *mux.Router, c di.Container) {
 		Path("/welcome").
 		HandlerFunc(api.Hello)
 
+	s.
+		Methods(http.MethodPost).
+		Path("/post-test").
+		Handler(api.PostTest{})
+
 	// ...
 }

@@ -5,6 +5,7 @@ go 1.12
 require (
 	github.com/gorilla/mux v1.7.3
 	github.com/gostalt/logger v1.0.0
+	github.com/gostalt/validate v0.1.0
 
 	github.com/joho/godotenv v1.3.0
 	github.com/kabukky/httpscerts v0.0.0-20150320125433-617593d7dcb3
