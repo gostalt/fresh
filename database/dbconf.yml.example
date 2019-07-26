@@ -1,3 +1,0 @@
-development:
-    driver: postgres
-    open: user=thomas dbname=gostalt sslmode=disable
