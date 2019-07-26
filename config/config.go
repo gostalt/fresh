@@ -10,6 +10,8 @@ func Load(env map[string]string) map[string]map[string]string {
 		return cfg
 	}
 
+	// TODO: Would be ideal to map these dynamically for each
+	// file that does exist in the config directory.
 	cfg = map[string]map[string]string{
 		"app":      app(env),
 		"database": database(env),
@@ -19,7 +21,8 @@ func Load(env map[string]string) map[string]map[string]string {
 	return cfg
 }
 
-// Get returns the value of a key from a specific domain.
+// Get returns the value of a key from a specific domain. A non-
+// existant domain or key will return an empty string.
 func Get(domain string, key string) string {
 	return cfg[domain][key]
 }
