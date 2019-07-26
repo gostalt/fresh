@@ -33,6 +33,7 @@ func (p RouteServiceProvider) Register(b *di.Builder) {
 			r := mux.NewRouter()
 
 			// Apply the globalMiddlewareStack to the router.
+			r.Use(middleware.ContainerResolver{c}.Handle)
 			r.Use(globalMiddlewareStack...)
 
 			// Here, the collections of routes are added to the
