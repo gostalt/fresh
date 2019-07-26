@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"gostalt/app/http/middleware"
 	"html/template"
 	"net/http"
 
@@ -9,22 +8,17 @@ import (
 	"github.com/sarulabs/di"
 )
 
+// WebRoutes is the place to define web routes for your app. The
+// web middleware stack is applied to all routes automatically.
 func WebRoutes(r *mux.Router, container di.Container) {
-	s := r.PathPrefix("/").Subrouter()
-
-	// Middleware can be defined on the subrouter, and this
-	// affects all routes then registered. Middleware runs
-	// in the order that it is defined below.
-	s.Use(
-		middleware.AddURIParametersToRequest,
-	)
-
 	views := container.Get("views").(*template.Template)
 
-	s.
+	r.
 		Methods(http.MethodGet).
 		Path("/hello/{name}").
 		HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			views.ExecuteTemplate(w, "welcome", nil)
+			r.ParseForm()
+			name := r.Form.Get(":name")
+			views.ExecuteTemplate(w, "welcome", name)
 		})
 }

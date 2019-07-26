@@ -9,6 +9,8 @@ import (
 	"github.com/sarulabs/di"
 )
 
+// RouteServiceProvider is responsible for registering the app's
+// routes. That is, the URIs that call a handler.
 type RouteServiceProvider struct {
 	BaseServiceProvider
 }
@@ -22,28 +24,54 @@ var globalMiddlewareStack = []mux.MiddlewareFunc{
 	middleware.RequestTimer,
 }
 
+// Register creates a new mux.Router instance in the container,
+// and then registers the user defined routes inside of it.
 func (p RouteServiceProvider) Register(b *di.Builder) {
 	b.Add(di.Def{
 		Name: "router",
 		Build: func(c di.Container) (interface{}, error) {
-			// Create a new instance of a mux.Router and use the
-			// globalMiddlewareStack for all incoming requests.
 			r := mux.NewRouter()
+
+			// Apply the globalMiddlewareStack to the router.
 			r.Use(globalMiddlewareStack...)
 
-			// Register each set of routes with the Router. The
-			// routes below are set in the ./routes directory.
-			routes.APIRoutes(r, c)
-			routes.WebRoutes(r, c)
-
-			r.PathPrefix("/assets/").Handler(
-				http.StripPrefix(
-					"/assets/",
-					http.FileServer(http.Dir("./public")),
-				),
-			)
+			// Here, the collections of routes are added to the
+			// router. You can define custom collections easily.
+			p.registerWebRoutes(r, c)
+			p.registerAPIRoutes(r, c)
+			p.registerAssetsRoute(r)
 
 			return r, nil
 		},
 	})
+}
+
+func (p RouteServiceProvider) registerWebRoutes(r *mux.Router, c di.Container) {
+	web := r.PathPrefix("/").Subrouter()
+
+	web.Use(
+		middleware.AddURIParametersToRequest,
+	)
+
+	routes.WebRoutes(web, c)
+}
+
+func (p RouteServiceProvider) registerAPIRoutes(r *mux.Router, c di.Container) {
+	api := r.PathPrefix("/api").Subrouter()
+
+	api.Use(
+		middleware.JSONHeader,
+		c.Get("TokenAuthentication").(middleware.TokenAuthentication).Handle,
+	)
+
+	routes.APIRoutes(api, c)
+}
+
+func (p RouteServiceProvider) registerAssetsRoute(r *mux.Router) {
+	r.PathPrefix("/assets/").Handler(
+		http.StripPrefix(
+			"/assets/",
+			http.FileServer(http.Dir("./public")),
+		),
+	)
 }
