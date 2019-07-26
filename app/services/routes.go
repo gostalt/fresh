@@ -36,8 +36,13 @@ func (p RouteServiceProvider) Register(b *di.Builder) {
 			r.Use(middleware.ContainerResolver{c}.Handle)
 			r.Use(globalMiddlewareStack...)
 
-			// Here, the collections of routes are added to the
-			// router. You can define custom collections easily.
+			r.Path("/favicon.ico").HandlerFunc(
+				func(w http.ResponseWriter, r *http.Request) {
+					http.ServeFile(w, r, "./public/favicon.ico")
+					return
+				},
+			)
+
 			p.registerWebRoutes(r, c)
 			p.registerAPIRoutes(r, c)
 			p.registerAssetsRoute(r)

@@ -17,6 +17,7 @@ func AddURIParametersToRequest(next http.Handler) http.Handler {
 			params := mux.Vars(r)
 			if len(params) == 0 {
 				next.ServeHTTP(w, r)
+				return
 			}
 
 			// If params do exist on the request, then parse the

@@ -13,6 +13,6 @@ import (
 func WebRoutes(r *mux.Router, container di.Container) {
 	r.
 		Methods(http.MethodGet).
-		Path("/hello/{name}").
+		Path("/").
 		HandlerFunc(web.Welcome)
 }

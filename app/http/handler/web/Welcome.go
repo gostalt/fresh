@@ -13,5 +13,4 @@ func Welcome(w http.ResponseWriter, r *http.Request) {
 	name := r.Form.Get(":name")
 
 	views.ExecuteTemplate(w, "welcome", name)
-	return
 }
