@@ -34,12 +34,20 @@ func (p ViewServiceProvider) Register(b *di.Builder) {
 func load(path string) *template.Template {
 	path = filepath.Clean(path)
 
-	tmpls, err := findAndParseTemplates(path, nil)
+	tmpls, err := findAndParseTemplates(path, viewFunctions())
 	if err != nil {
 		log.Fatalln("unable to load templates:", err)
 	}
 
 	return tmpls
+}
+
+func viewFunctions() template.FuncMap {
+	return template.FuncMap{
+		"asset": func(path string) string {
+			return "/assets/" + path
+		},
+	}
 }
 
 func findAndParseTemplates(
