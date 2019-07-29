@@ -5,14 +5,15 @@ import (
 	"gostalt/config"
 
 	// Import the postgres driver for the database.
-	_ "github.com/lib/pq"
+	"github.com/gostalt/framework/service"
 	"github.com/gostalt/logger"
+	_ "github.com/lib/pq"
 
 	"github.com/sarulabs/di"
 )
 
 type DatabaseServiceProvider struct {
-	BaseServiceProvider
+	service.BaseProvider
 }
 
 func (p DatabaseServiceProvider) Register(b *di.Builder) {

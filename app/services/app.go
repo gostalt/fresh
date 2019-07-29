@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"gostalt/app/http/middleware"
 
+	"github.com/gostalt/framework/service"
 	"github.com/sarulabs/di"
 )
 
@@ -11,7 +12,7 @@ import (
 // can use for any misc initialisation that doesn't warrant a
 // dedicated ServiceProvider.
 type AppServiceProvider struct {
-	BaseServiceProvider
+	service.BaseProvider
 }
 
 var services = []di.Def{

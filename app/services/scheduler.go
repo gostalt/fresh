@@ -4,12 +4,13 @@ import (
 	"gostalt/app/jobs"
 
 	"github.com/gostalt/framework/schedule"
+	"github.com/gostalt/framework/service"
 	"github.com/gostalt/logger"
 	"github.com/sarulabs/di"
 )
 
 type SchedulerServiceProvider struct {
-	BaseServiceProvider
+	service.BaseProvider
 }
 
 func (p SchedulerServiceProvider) Register(b *di.Builder) {

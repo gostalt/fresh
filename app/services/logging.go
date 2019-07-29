@@ -4,12 +4,13 @@ import (
 	"gostalt/app/services/logging"
 	"gostalt/config"
 
+	"github.com/gostalt/framework/service"
 	"github.com/gostalt/logger"
 	"github.com/sarulabs/di"
 )
 
 type LoggingServiceProvider struct {
-	BaseServiceProvider
+	service.BaseProvider
 }
 
 func (p LoggingServiceProvider) Register(b *di.Builder) {

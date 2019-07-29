@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"gostalt/config"
 
+	"github.com/gostalt/framework/service"
 	"github.com/kabukky/httpscerts"
 	"github.com/sarulabs/di"
 	"golang.org/x/crypto/acme/autocert"
 )
 
 type TLSServiceProvider struct {
-	BaseServiceProvider
+	service.BaseProvider
 }
 
 // certificateDirectory returns the path of a file in the config

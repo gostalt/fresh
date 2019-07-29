@@ -8,11 +8,12 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/gostalt/framework/service"
 	"github.com/sarulabs/di"
 )
 
 type ViewServiceProvider struct {
-	BaseServiceProvider
+	service.BaseProvider
 }
 
 // path is the directory, relative to the project root, that the

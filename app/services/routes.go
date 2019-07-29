@@ -6,6 +6,8 @@ import (
 	"net/http"
 
 	"github.com/gostalt/framework/route"
+	mw "github.com/gostalt/framework/route/middleware"
+	"github.com/gostalt/framework/service"
 
 	"github.com/gorilla/mux"
 	"github.com/sarulabs/di"
@@ -14,16 +16,14 @@ import (
 // RouteServiceProvider is responsible for registering the app's
 // routes. That is, the URIs that call a handler.
 type RouteServiceProvider struct {
-	BaseServiceProvider
+	service.BaseProvider
 }
 
 // globalMiddlewareStack defines a middleware stack for the base
 // router of the application. These middleware are ran in the
 // order they are defined on every http request to the app.
 var globalMiddlewareStack = []route.Middleware{
-	// for example:
 	middleware.IsInMaintenanceMode,
-	middleware.RequestTimer,
 }
 
 // Register creates a new mux.Router instance in the container,
@@ -61,7 +61,7 @@ func (p RouteServiceProvider) registerWebRoutes(r *mux.Router, c di.Container) {
 	web := r.NewRoute().Subrouter()
 
 	web.Use(
-		middleware.AddURIParametersToRequest,
+		mw.AddURIParametersToRequest,
 	)
 
 	route.TransformGorilla(web, routes.Web)
@@ -71,7 +71,7 @@ func (p RouteServiceProvider) registerAPIRoutes(r *mux.Router, c di.Container) {
 	api := r.PathPrefix("/api").Subrouter()
 
 	api.Use(
-		middleware.JSONHeader,
+		mw.AddJSONContentTypeHeader,
 		c.Get("TokenAuthentication").(middleware.TokenAuthentication).Handle,
 	)
 
