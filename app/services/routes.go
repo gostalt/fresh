@@ -20,7 +20,7 @@ type RouteServiceProvider struct {
 // globalMiddlewareStack defines a middleware stack for the base
 // router of the application. These middleware are ran in the
 // order they are defined on every http request to the app.
-var globalMiddlewareStack = []mux.MiddlewareFunc{
+var globalMiddlewareStack = []route.Middleware{
 	// for example:
 	middleware.IsInMaintenanceMode,
 	middleware.RequestTimer,
@@ -36,7 +36,10 @@ func (p RouteServiceProvider) Register(b *di.Builder) {
 
 			// Apply the globalMiddlewareStack to the router.
 			r.Use(middleware.ContainerResolver{c}.Handle)
-			r.Use(globalMiddlewareStack...)
+
+			for _, middleware := range globalMiddlewareStack {
+				r.Use(mux.MiddlewareFunc(middleware))
+			}
 
 			r.Path("/favicon.ico").HandlerFunc(
 				func(w http.ResponseWriter, r *http.Request) {
