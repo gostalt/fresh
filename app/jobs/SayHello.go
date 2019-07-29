@@ -1,15 +1,10 @@
-package cron
+package jobs
 
 import (
 	"time"
 
 	"github.com/gostalt/logger"
 )
-
-type Jobber interface {
-	Handle() error
-	ShouldFire() bool
-}
 
 type SayHello struct {
 	logger logger.Logger

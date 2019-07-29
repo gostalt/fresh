@@ -1,10 +1,11 @@
 package services
 
 import (
-	"gostalt/app/cron"
+	"gostalt/app/jobs"
 
-	"github.com/sarulabs/di"
+	"github.com/gostalt/framework/schedule"
 	"github.com/gostalt/logger"
+	"github.com/sarulabs/di"
 )
 
 type SchedulerServiceProvider struct {
@@ -15,17 +16,9 @@ func (p SchedulerServiceProvider) Register(b *di.Builder) {
 	b.Add(di.Def{
 		Name: "scheduler",
 		Build: func(c di.Container) (interface{}, error) {
-			l := c.Get("logger").(logger.Logger)
-			// Scheduled jobs should just print to STDOUT for now.
-			// TODO: Remove this - maybe have a separate log for
-			// scheduled jobs?
+			s := schedule.Runner{}
 
-			s := &cron.Scheduler{
-				Logger: l,
-			}
-
-			// TODO: Here is where jobs should be added to the scheduler.
-			sh := c.Get("hello-scheduled").(cron.Jobber)
+			sh := c.Get("hello-scheduled").(schedule.Job)
 			s.Add(sh)
 
 			return s, nil
@@ -36,7 +29,7 @@ func (p SchedulerServiceProvider) Register(b *di.Builder) {
 		Name: "hello-scheduled",
 		Build: func(c di.Container) (interface{}, error) {
 			l := c.Get("logger").(logger.Logger)
-			h := cron.MakeSayHello(l)
+			h := jobs.MakeSayHello(l)
 			return h, nil
 		},
 	})
