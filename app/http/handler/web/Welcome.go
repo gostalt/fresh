@@ -9,8 +9,6 @@ import (
 
 func Welcome(w http.ResponseWriter, r *http.Request) {
 	views := di.Get(r, "views").(*template.Template)
-	r.ParseForm()
-	name := r.Form.Get(":name")
 
-	views.ExecuteTemplate(w, "welcome", name)
+	views.ExecuteTemplate(w, "welcome", nil)
 }

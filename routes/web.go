@@ -1,14 +1,14 @@
 package routes
 
 import (
-	"gostalt/app/http/handler/web"
-
 	"net/http"
 
 	"github.com/gostalt/framework/route"
+	mw "github.com/gostalt/framework/route/middleware"
+
+	"gostalt/app/http/handler/web"
 )
 
-var Web = route.Collection{
+var Web = route.Collection(
 	route.Get("/", http.Handler(http.HandlerFunc(web.Welcome))),
-	route.Redirect("old", "/"),
-}
+).Middleware(mw.AddURIParametersToRequest)
