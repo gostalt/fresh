@@ -1,5 +1,23 @@
 # Gostalt
 
+The Go Framework.
+
+-----
+
+Gostalt is a clean, minimal framework for the Go programming language.
+It aims to offer “just enough”, whilst also eliminating a number
+of pain points when creating new Go projects.
+
+Feature highlights include:
+
+- Easy route registration
+- App-wide and route-group middleware
+- DI Container
+- Config resolution using `.env` files
+- Database migrations
+- Commands and scheduled jobs
+- Automatic SSL certificate generation
+
 ## Features
 
 ### Container
