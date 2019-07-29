@@ -7,7 +7,7 @@ func logging(env map[string]string) map[string]string {
 		// service provider's getLogger method.
 		//
 		// The default values available are: `stdout` and `file`.
-		"driver": "file",
+		"driver": env["LOG_DRIVER"],
 
 		// Dir determines the directory to save log files to, if
 		// a file driver is chosen.
