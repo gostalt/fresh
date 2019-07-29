@@ -67,6 +67,11 @@ func findAndParseTemplates(
 				// rather than `name.html`.
 				name := path[pfx : len(path)-5]
 
+				name = strings.Join(
+					strings.Split(name, "/"),
+					".",
+				)
+
 				t := root.New(name).Funcs(funcMap)
 				t, e2 = t.Parse(string(b))
 				if e2 != nil {
