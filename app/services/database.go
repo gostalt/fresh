@@ -1,12 +1,12 @@
 package services
 
 import (
-	"database/sql"
 	"gostalt/config"
 
 	// Import the postgres driver for the database.
 	"github.com/gostalt/framework/service"
 	"github.com/gostalt/logger"
+	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 
 	"github.com/sarulabs/di"
@@ -20,12 +20,13 @@ func (p DatabaseServiceProvider) Register(b *di.Builder) {
 	b.Add(di.Def{
 		Name: "database",
 		Build: func(c di.Container) (interface{}, error) {
-			db, err := sql.Open(config.Get("database", "driver"), config.Get("database", "string"))
+			db, err := sqlx.Connect(
+				config.Get("database", "driver"),
+				config.Get("database", "string"),
+			)
+
 			if err != nil {
-				panic(err)
-			}
-			if err := db.Ping(); err != nil {
-				panic(err)
+				return nil, err
 			}
 
 			return db, nil
