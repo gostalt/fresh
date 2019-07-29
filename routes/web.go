@@ -2,17 +2,13 @@ package routes
 
 import (
 	"gostalt/app/http/handler/web"
+
 	"net/http"
 
-	"github.com/gorilla/mux"
-	"github.com/sarulabs/di"
+	"github.com/gostalt/framework/route"
 )
 
-// WebRoutes is the place to define web routes for your app. The
-// web middleware stack is applied to all routes automatically.
-func WebRoutes(r *mux.Router, container di.Container) {
-	r.
-		Methods(http.MethodGet).
-		Path("/").
-		HandlerFunc(web.Welcome)
+var Web = route.Collection{
+	route.Get("/", http.Handler(http.HandlerFunc(web.Welcome))),
+	route.Redirect("old", "/"),
 }

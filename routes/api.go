@@ -3,15 +3,12 @@ package routes
 import (
 	"net/http"
 
-	"gostalt/app/http/handler/api"
+	"github.com/gostalt/framework/route"
 
-	"github.com/gorilla/mux"
-	"github.com/sarulabs/di"
+	"gostalt/app/http/handler/api"
 )
 
-// APIRoutes is where API specific routes for the app are defined.
-// All API routes are prefixed with "/api/" automatically.
-func APIRoutes(r *mux.Router, c di.Container) {
-	r.Methods(http.MethodGet).Path("/welcome").HandlerFunc(api.Hello)
-	r.Methods(http.MethodPost).Path("/post-test").Handler(api.PostTest{})
+var API = route.Collection{
+	route.Get("welcome", http.Handler(http.HandlerFunc(api.Hello))),
+	route.Post("post-test", api.PostTest{}),
 }

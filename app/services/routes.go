@@ -5,6 +5,8 @@ import (
 	"gostalt/routes"
 	"net/http"
 
+	"github.com/gostalt/framework/route"
+
 	"github.com/gorilla/mux"
 	"github.com/sarulabs/di"
 )
@@ -53,13 +55,13 @@ func (p RouteServiceProvider) Register(b *di.Builder) {
 }
 
 func (p RouteServiceProvider) registerWebRoutes(r *mux.Router, c di.Container) {
-	web := r.PathPrefix("/").Subrouter()
+	web := r.NewRoute().Subrouter()
 
 	web.Use(
 		middleware.AddURIParametersToRequest,
 	)
 
-	routes.WebRoutes(web, c)
+	route.TransformGorilla(web, routes.Web)
 }
 
 func (p RouteServiceProvider) registerAPIRoutes(r *mux.Router, c di.Container) {
@@ -70,7 +72,7 @@ func (p RouteServiceProvider) registerAPIRoutes(r *mux.Router, c di.Container) {
 		c.Get("TokenAuthentication").(middleware.TokenAuthentication).Handle,
 	)
 
-	routes.APIRoutes(api, c)
+	route.TransformGorilla(api, routes.API)
 }
 
 func (p RouteServiceProvider) registerAssetsRoute(r *mux.Router) {
