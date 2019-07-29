@@ -5,7 +5,6 @@ import (
 
 	// Import the postgres driver for the database.
 	"github.com/gostalt/framework/service"
-	"github.com/gostalt/logger"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 
@@ -32,9 +31,4 @@ func (p DatabaseServiceProvider) Register(b *di.Builder) {
 			return db, nil
 		},
 	})
-}
-
-func (p DatabaseServiceProvider) Boot(c di.Container) {
-	logger := c.Get("logger").(logger.Logger)
-	logger.Debug([]byte("Database booted"))
 }

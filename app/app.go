@@ -2,12 +2,14 @@ package app
 
 import (
 	"crypto/tls"
+	"fmt"
 	"gostalt/app/services"
 	"gostalt/config"
 	"net/http"
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/gostalt/logger"
 	"github.com/joho/godotenv"
 	"github.com/sarulabs/di"
 	"golang.org/x/crypto/acme/autocert"
@@ -73,10 +75,14 @@ func (a *App) Run() error {
 		go http.ListenAndServe(":80", le.HTTPHandler(nil))
 
 		return srv.ListenAndServeTLS("", "")
+	} else {
+		logger := a.Container.Get("logger").(logger.Logger)
+		message := fmt.Sprintf("Server running at %s", config.Get("app", "address"))
+		logger.Info([]byte(message))
+		return srv.ListenAndServeTLS(
+			config.Get("app", "certificate_directory")+"/cert.pem",
+			config.Get("app", "certificate_directory")+"/key.pem",
+		)
 	}
 
-	return srv.ListenAndServeTLS(
-		config.Get("app", "certificate_directory")+"/cert.pem",
-		config.Get("app", "certificate_directory")+"/key.pem",
-	)
 }
