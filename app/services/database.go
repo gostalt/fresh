@@ -1,6 +1,7 @@
 package services
 
 import (
+	"database/sql"
 	"gostalt/config"
 
 	// Import the postgres driver for the database.
@@ -24,6 +25,31 @@ func (p DatabaseServiceProvider) Register(b *di.Builder) {
 				config.Get("database", "string"),
 			)
 
+			if err != nil {
+				return nil, err
+			}
+
+			return db, nil
+		},
+	})
+
+	b.Add(di.Def{
+		// TODO: Database Basic is a Go sql.DB item, rather
+		// than the superior sqlx.DB. Goose migrations only
+		// support sql.DB, so when the migrations are rewritten
+		// make sure it supports sql.DB.
+		Name: "database-basic",
+		Build: func(c di.Container) (interface{}, error) {
+			db, err := sql.Open(
+				config.Get("database", "driver"),
+				config.Get("database", "string"),
+			)
+
+			if err != nil {
+				return nil, err
+			}
+
+			err = db.Ping()
 			if err != nil {
 				return nil, err
 			}

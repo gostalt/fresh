@@ -30,7 +30,7 @@ var migrateCreateCmd = &cobra.Command{
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		a := app.Make()
-		db := a.Container.Get("database").(*sql.DB)
+		db := a.Container.Get("database-basic").(*sql.DB)
 
 		if err := goose.Create(
 			db,
@@ -48,7 +48,7 @@ var migrateUpCmd = &cobra.Command{
 	Short: "Run all pending migrations on the database",
 	Run: func(cmd *cobra.Command, args []string) {
 		a := app.Make()
-		db := a.Container.Get("database").(*sql.DB)
+		db := a.Container.Get("database-basic").(*sql.DB)
 
 		if err := goose.Up(
 			db,
@@ -64,7 +64,7 @@ var migrateDownCmd = &cobra.Command{
 	Short: "Drop the most recent migration",
 	Run: func(cmd *cobra.Command, args []string) {
 		a := app.Make()
-		db := a.Container.Get("database").(*sql.DB)
+		db := a.Container.Get("database-basic").(*sql.DB)
 
 		if err := goose.Down(
 			db,
