@@ -33,15 +33,25 @@ type <Repository> struct {
 	*sqlx.DB
 }
 
-func (r <Repository>) fetchFromDB(id int) (entity.<Repository>, error) {
+func (r <Repository>) Fetch(id int) (entity.<Repository>, error) {
 	<repository> := entity.<Repository>{}
-	err := r.Get(&<repository>, "select * from <repository> where id = $1 limit 1", id)
+	err := r.Get(&<repository>, "select * from <repository>s where id = $1 limit 1", id)
 	if err != nil {
 		r.Logger.Warning([]byte(err.Error()))
 		return <repository>, err
 	}
 
 	return <repository>, nil
+}
+
+func (r <Repository>) FetchAll() []entity.<Repository> {
+	<repository>s := []entity.<Repository>{}
+	<repository>s, err := r.Select(&<repository>s, "select * from <repository>s")
+	if err != nil {
+		return []entity.<Repository>{}
+	}
+
+	return <repository>s
 }
 `
 
