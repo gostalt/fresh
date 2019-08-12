@@ -16,6 +16,7 @@ func Load(env map[string]string) map[string]map[string]string {
 		"app":      app(env),
 		"database": database(env),
 		"logging":  logging(env),
+		"maker":    maker(env),
 	}
 
 	return cfg
