@@ -14,6 +14,7 @@ func init() {
 	migrateCmd.AddCommand(migrateCreateCmd)
 	migrateCmd.AddCommand(migrateUpCmd)
 	migrateCmd.AddCommand(migrateDownCmd)
+	migrateCmd.AddCommand(migrateMagicCmd)
 
 	rootCmd.AddCommand(migrateCmd)
 }
@@ -69,6 +70,25 @@ var migrateDownCmd = &cobra.Command{
 		if err := goose.Down(
 			db,
 			config.Get("database", "migration_directory"),
+		); err != nil {
+			panic(err)
+		}
+	},
+}
+
+var migrateMagicCmd = &cobra.Command{
+	Use:   "magic",
+	Short: "Creates a magic migration from an entity",
+	Args:  cobra.ExactArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+		a := app.Make()
+		db := a.Container.Get("database-basic").(*sql.DB)
+
+		if err := goose.Create(
+			db,
+			config.Get("database", "migration_directory"),
+			args[0],
+			"sql",
 		); err != nil {
 			panic(err)
 		}

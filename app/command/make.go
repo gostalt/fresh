@@ -11,7 +11,12 @@ import (
 )
 
 // entityStub is the basic implementation of an entity.
+// TODO: The go generate code here isn't great as it relies on shell.
+// However, the generate code is called relatively, and invoking the
+// gostalt binary with ../../gostalt doesn't pull in env files. Hmm...
 const entityStub = `package entity
+
+//go:gen sh -c "cd ../../ && go run main.go migrate magic $GOFILE"
 
 type <Entity> struct {
 	// Fields here
@@ -101,7 +106,12 @@ var makeEntityCmd = &cobra.Command{
 			fmt.Println(err)
 		}
 
-		content := strings.Replace(entityStub, "<Entity>", entity, -1)
+		content := strings.Replace(entityStub, "<entity>", entity, -1)
+		content = strings.Replace(content, "<Entity>", entity, -1)
+
+		// Annoyingly, running `go generate ./...` will trigger the
+		// command in the entityStub, so we must replace it here.
+		content = strings.Replace(content, "go:gen", "go:generate", -1)
 
 		f.Write([]byte(content))
 	},
