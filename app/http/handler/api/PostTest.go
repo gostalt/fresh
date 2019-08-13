@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gostalt/validate"
@@ -23,23 +22,11 @@ func (h PostTest) rules() []validate.Rule {
 	return []validate.Rule{
 		validate.Rule{
 			Param: "forename",
-			Check: func(r *http.Request, param string) error {
-				if _, exists := r.Form[param]; !exists {
-					return fmt.Errorf("The %s param must exist", param)
-				}
-
-				return nil
-			},
+			Check: validate.Required,
 		},
 		validate.Rule{
 			Param: "doohickey",
-			Check: func(r *http.Request, param string) error {
-				if _, exists := r.Form[param]; !exists {
-					return fmt.Errorf("The %s param must exist", param)
-				}
-
-				return nil
-			},
+			Check: validate.Required,
 		},
 	}
 }
