@@ -1,12 +1,16 @@
 package command
 
 import (
+	"database/sql"
 	"fmt"
 	"gostalt/app"
 	"gostalt/config"
 	"os"
 	"strings"
+	"sync"
 
+	"github.com/gostalt/logger"
+	"github.com/pressly/goose"
 	"github.com/spf13/cobra"
 )
 
@@ -70,22 +74,9 @@ var makeRepositoryCmd = &cobra.Command{
 	Short: "Make a repository",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		app.Make()
-		path := config.Get("maker", "repository_path")
+		app := app.Make()
 
-		repository := strings.Title(strings.ToLower(args[0]))
-
-		path = path + repository + ".go"
-
-		f, err := os.Create(path)
-		if err != nil {
-			fmt.Println(err)
-		}
-
-		content := strings.Replace(repositoryStub, "<repository>", strings.ToLower(repository), -1)
-		content = strings.Replace(content, "<Repository>", repository, -1)
-
-		f.Write([]byte(content))
+		go createRepository(args[0], app, nil)
 	},
 }
 
@@ -94,30 +85,103 @@ var makeEntityCmd = &cobra.Command{
 	Short: "Make an entity",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		app.Make()
-		path := config.Get("maker", "entity_path")
+		var wg sync.WaitGroup
+		name := args[0]
 
-		entity := strings.Title(strings.ToLower(args[0]))
+		app := app.Make()
 
-		path = path + entity + ".go"
+		cmd.ParseFlags(args)
+		migration := cmd.Flag("migration")
+		repository := cmd.Flag("repository")
 
-		f, err := os.Create(path)
-		if err != nil {
-			fmt.Println(err)
+		if migration.Value.String() == "true" {
+			wg.Add(1)
+			path := fmt.Sprintf("create_%s_table", name)
+			go createMigration(path, app, &wg)
 		}
 
-		content := strings.Replace(entityStub, "<entity>", entity, -1)
-		content = strings.Replace(content, "<Entity>", entity, -1)
+		if repository.Value.String() == "true" {
+			wg.Add(1)
+			go createRepository(name, app, &wg)
+		}
 
-		// Annoyingly, running `go generate ./...` will trigger the
-		// command in the entityStub, so we must replace it here.
-		content = strings.Replace(content, "go:gen", "go:generate", -1)
+		wg.Add(1)
+		go createEntity(name, app, &wg)
 
-		f.Write([]byte(content))
+		wg.Wait()
 	},
 }
 
+// TODO: The createMigration, createRepository and createEntity
+// calls shouldn't really live here, they should hand off to
+// some sort of service to do the heavy lifting.
+
+func createMigration(path string, app *app.App, wg *sync.WaitGroup) {
+	db := app.Container.Get("database-basic").(*sql.DB)
+
+	if err := goose.Create(
+		db,
+		config.Get("database", "migration_directory"),
+		path,
+		"sql",
+	); err != nil {
+		panic(err)
+	}
+
+	wg.Done()
+}
+
+func createRepository(name string, app *app.App, wg *sync.WaitGroup) {
+	path := config.Get("maker", "repository_path")
+
+	repository := strings.Title(strings.ToLower(name))
+
+	path = path + repository + ".go"
+
+	f, err := os.Create(path)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	content := strings.Replace(repositoryStub, "<repository>", strings.ToLower(repository), -1)
+	content = strings.Replace(content, "<Repository>", repository, -1)
+
+	f.Write([]byte(content))
+
+	l := app.Container.Get("logger").(logger.Logger)
+	l.Info([]byte("repository created"))
+	wg.Done()
+}
+
+func createEntity(name string, app *app.App, wg *sync.WaitGroup) {
+	path := config.Get("maker", "entity_path")
+
+	entity := strings.Title(strings.ToLower(name))
+
+	path = path + entity + ".go"
+
+	f, err := os.Create(path)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	content := strings.Replace(entityStub, "<entity>", entity, -1)
+	content = strings.Replace(content, "<Entity>", entity, -1)
+
+	// Annoyingly, running `go generate ./...` will trigger the
+	// command in the entityStub, so we must replace it here.
+	content = strings.Replace(content, "go:gen", "go:generate", -1)
+
+	f.Write([]byte(content))
+
+	l := app.Container.Get("logger").(logger.Logger)
+	l.Info([]byte("entity created"))
+	wg.Done()
+}
+
 func init() {
+	makeEntityCmd.Flags().BoolP("migration", "m", false, "Generate a migration file for this entity")
+	makeEntityCmd.Flags().BoolP("repository", "r", false, "Generate a repository for this entity")
 	makeCmd.AddCommand(makeEntityCmd)
 	makeCmd.AddCommand(makeRepositoryCmd)
 	rootCmd.AddCommand(makeCmd)

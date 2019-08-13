@@ -16,6 +16,7 @@ require (
 	github.com/pressly/goose v2.6.0+incompatible
 	github.com/sarulabs/di v2.0.0+incompatible
 	github.com/spf13/cobra v0.0.5
+	github.com/spf13/pflag v1.0.3
 	golang.org/x/crypto v0.0.0-20190605123033-f99c8df09eb5
 	google.golang.org/appengine v1.6.1 // indirect
 )
