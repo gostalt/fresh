@@ -1,9 +1,6 @@
 package services
 
 import (
-	"database/sql"
-	"gostalt/app/http/middleware"
-
 	"github.com/gostalt/framework/service"
 	"github.com/sarulabs/di"
 )
@@ -15,18 +12,7 @@ type AppServiceProvider struct {
 	service.BaseProvider
 }
 
-var services = []di.Def{
-	{
-		Name: "TokenAuthentication",
-		Build: func(c di.Container) (interface{}, error) {
-			mw := middleware.TokenAuthentication{
-				DB: c.Get("database").(*sql.DB),
-			}
-
-			return mw, nil
-		},
-	},
-}
+var services = []di.Def{}
 
 // Register registers the list of services in the Container's
 // build definition.
