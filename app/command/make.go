@@ -6,6 +6,7 @@ import (
 	"gostalt/app"
 	"gostalt/config"
 	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 
@@ -64,9 +65,58 @@ func (r <Repository>) FetchAll() []entity.<Repository> {
 }
 `
 
+const handlerStub = `package <package>
+
+import (
+	"net/http"
+)
+
+func <handler>(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Hello World!"))
+}`
+
 var makeCmd = &cobra.Command{
 	Use:   "make",
 	Short: "Make a new file",
+}
+
+var makeHandlerCmd = &cobra.Command{
+	Use:   "handler",
+	Short: "Make a handler",
+	Long: `Use dot notation to create a nested handler. For
+example, "api.Welcome" would become api/Welcome.go`,
+	Args: cobra.ExactArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+		app := app.Make()
+		handler := args[0]
+
+		createHandler(handler, app)
+	},
+}
+
+func createHandler(handler string, app *app.App) {
+	handlerRoot := "app/http/handler/"
+	pieces := strings.Split(handler, ".")
+
+	// TODO: Tidy this shit up
+	dir := filepath.Join(pieces[:len(pieces)-1]...)
+	dir = handlerRoot + dir
+	pkg := pieces[len(pieces)-2]
+	file := pieces[len(pieces)-1]
+	path := dir + "/" + file + ".go"
+	os.MkdirAll(dir, os.ModePerm)
+
+	f, err := os.Create(path)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	content := strings.Replace(handlerStub, "<package>", pkg, -1)
+	content = strings.Replace(content, "<handler>", file, -1)
+
+	f.Write([]byte(content))
+
+	fmt.Println(path)
 }
 
 var makeRepositoryCmd = &cobra.Command{
@@ -184,5 +234,6 @@ func init() {
 	makeEntityCmd.Flags().BoolP("repository", "r", false, "Generate a repository for this entity")
 	makeCmd.AddCommand(makeEntityCmd)
 	makeCmd.AddCommand(makeRepositoryCmd)
+	makeCmd.AddCommand(makeHandlerCmd)
 	rootCmd.AddCommand(makeCmd)
 }
