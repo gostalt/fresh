@@ -5,26 +5,13 @@ import (
 	"fmt"
 	"gostalt/app"
 	"gostalt/config"
-	"os"
-	"path/filepath"
-	"strings"
 	"sync"
 
-	"github.com/gostalt/framework/service/maker"
+	"github.com/gostalt/framework/maker"
 	"github.com/gostalt/logger"
 	"github.com/pressly/goose"
 	"github.com/spf13/cobra"
 )
-
-const handlerStub = `package <package>
-
-import (
-	"net/http"
-)
-
-func <handler>(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Hello World!"))
-}`
 
 var makeCmd = &cobra.Command{
 	Use:   "make",
@@ -46,28 +33,8 @@ example, "api.Welcome" would become api/Welcome.go`,
 }
 
 func createHandler(handler string, app *app.App) {
-	handlerRoot := "app/http/handler/"
-	pieces := strings.Split(handler, ".")
-
-	// TODO: Tidy this shit up
-	dir := filepath.Join(pieces[:len(pieces)-1]...)
-	dir = handlerRoot + dir
-	pkg := pieces[len(pieces)-2]
-	file := pieces[len(pieces)-1]
-	path := dir + "/" + file + ".go"
-	os.MkdirAll(dir, os.ModePerm)
-
-	f, err := os.Create(path)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	content := strings.Replace(handlerStub, "<package>", pkg, -1)
-	content = strings.Replace(content, "<handler>", file, -1)
-
-	f.Write([]byte(content))
-
-	fmt.Println(path)
+	m := app.Container.Get("HandlerMaker").(maker.HandlerMaker)
+	m.Make(handler)
 }
 
 var makeRepositoryCmd = &cobra.Command{
@@ -113,9 +80,8 @@ var makeEntityCmd = &cobra.Command{
 	},
 }
 
-// TODO: The createMigration, createRepository and createEntity
-// calls shouldn't really live here, they should hand off to
-// some sort of service to do the heavy lifting.
+// TODO: The createMigration call shouldn't really live here,
+// it should hand off to some sort of service to do the heavy lifting.
 
 func createMigration(path string, app *app.App, wg *sync.WaitGroup) {
 	db := app.Container.Get("database-basic").(*sql.DB)
