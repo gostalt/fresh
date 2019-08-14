@@ -10,60 +10,11 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/gostalt/framework/service/maker"
 	"github.com/gostalt/logger"
 	"github.com/pressly/goose"
 	"github.com/spf13/cobra"
 )
-
-// entityStub is the basic implementation of an entity.
-// TODO: The go generate code here isn't great as it relies on shell.
-// However, the generate code is called relatively, and invoking the
-// gostalt binary with ../../gostalt doesn't pull in env files. Hmm...
-const entityStub = `package entity
-
-//go:gen sh -c "cd ../../ && go run main.go migrate magic $GOFILE"
-
-type <Entity> struct {
-	// Fields here
-}
-
-// Methods here
-`
-
-// repositoryStub is the basic implementation of a repository.
-const repositoryStub = `package repository
-
-import (
-	"gostalt/app/entity"
-
-	"github.com/jmoiron/sqlx"
-)
-
-type <Repository> struct {
-	*sqlx.DB
-}
-
-func (r <Repository>) Fetch(id int) (entity.<Repository>, error) {
-	<repository> := entity.<Repository>{}
-	err := r.Get(&<repository>, "select * from <repository>s where id = $1 limit 1", id)
-	if err != nil {
-		r.Logger.Warning([]byte(err.Error()))
-		return <repository>, err
-	}
-
-	return <repository>, nil
-}
-
-func (r <Repository>) FetchAll() []entity.<Repository> {
-	<repository>s := []entity.<Repository>{}
-	<repository>s, err := r.Select(&<repository>s, "select * from <repository>s")
-	if err != nil {
-		return []entity.<Repository>{}
-	}
-
-	return <repository>s
-}
-`
 
 const handlerStub = `package <package>
 
@@ -182,21 +133,8 @@ func createMigration(path string, app *app.App, wg *sync.WaitGroup) {
 }
 
 func createRepository(name string, app *app.App, wg *sync.WaitGroup) {
-	path := config.Get("maker", "repository_path")
-
-	repository := strings.Title(strings.ToLower(name))
-
-	path = path + repository + ".go"
-
-	f, err := os.Create(path)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	content := strings.Replace(repositoryStub, "<repository>", strings.ToLower(repository), -1)
-	content = strings.Replace(content, "<Repository>", repository, -1)
-
-	f.Write([]byte(content))
+	m := app.Container.Get("RepositoryMaker").(maker.RepositoryMaker)
+	m.Make(name)
 
 	l := app.Container.Get("logger").(logger.Logger)
 	l.Info([]byte("repository created"))
@@ -204,25 +142,8 @@ func createRepository(name string, app *app.App, wg *sync.WaitGroup) {
 }
 
 func createEntity(name string, app *app.App, wg *sync.WaitGroup) {
-	path := config.Get("maker", "entity_path")
-
-	entity := strings.Title(strings.ToLower(name))
-
-	path = path + entity + ".go"
-
-	f, err := os.Create(path)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	content := strings.Replace(entityStub, "<entity>", entity, -1)
-	content = strings.Replace(content, "<Entity>", entity, -1)
-
-	// Annoyingly, running `go generate ./...` will trigger the
-	// command in the entityStub, so we must replace it here.
-	content = strings.Replace(content, "go:gen", "go:generate", -1)
-
-	f.Write([]byte(content))
+	m := app.Container.Get("EntityMaker").(maker.EntityMaker)
+	m.Make(name)
 
 	l := app.Container.Get("logger").(logger.Logger)
 	l.Info([]byte("entity created"))
