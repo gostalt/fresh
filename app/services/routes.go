@@ -18,11 +18,9 @@ type RouteServiceProvider struct {
 	service.BaseProvider
 }
 
-// globalMiddlewareStack defines a middleware stack for the base
-// router of the application. These middleware are ran in the
-// order they are defined on every http request to the app.
-var globalMiddlewareStack = []route.Middleware{
-	middleware.IsInMaintenanceMode,
+var routeCollections = []*route.Group{
+	routes.Web,
+	routes.API,
 }
 
 // Register creates a new mux.Router instance in the container,
@@ -33,22 +31,16 @@ func (p RouteServiceProvider) Register(b *di.Builder) {
 		Build: func(c di.Container) (interface{}, error) {
 			r := mux.NewRouter()
 
-			// Apply the globalMiddlewareStack to the router.
-			r.Use(middleware.ContainerResolver{c}.Handle)
-
-			for _, middleware := range globalMiddlewareStack {
+			// Apply the global middleware stack to the base router.
+			for _, middleware := range p.globalMiddlewareStack(c) {
 				r.Use(mux.MiddlewareFunc(middleware))
 			}
 
-			r.Path("/favicon.ico").HandlerFunc(
-				func(w http.ResponseWriter, r *http.Request) {
-					http.ServeFile(w, r, "./public/favicon.ico")
-					return
-				},
-			)
+			for _, rc := range routeCollections {
+				route.TransformGorilla(r, rc)
+			}
 
-			p.registerWebRoutes(r, c)
-			p.registerAPIRoutes(r, c)
+			p.registerFaviconRoute(r)
 			p.registerAssetsRoute(r)
 
 			return r, nil
@@ -56,12 +48,13 @@ func (p RouteServiceProvider) Register(b *di.Builder) {
 	})
 }
 
-func (p RouteServiceProvider) registerWebRoutes(r *mux.Router, c di.Container) {
-	route.TransformGorilla(r, routes.Web)
-}
-
-func (p RouteServiceProvider) registerAPIRoutes(r *mux.Router, c di.Container) {
-	route.TransformGorilla(r, routes.API)
+func (p RouteServiceProvider) registerFaviconRoute(r *mux.Router) {
+	r.Path("/favicon.ico").HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			http.ServeFile(w, r, "./public/favicon.ico")
+			return
+		},
+	)
 }
 
 func (p RouteServiceProvider) registerAssetsRoute(r *mux.Router) {
@@ -71,4 +64,17 @@ func (p RouteServiceProvider) registerAssetsRoute(r *mux.Router) {
 			http.FileServer(http.Dir("./public")),
 		),
 	)
+}
+
+// globalMiddlewareStack defines a middleware stack for the base
+// router of the application. These middleware are ran in the
+// order they are defined on every http request to the app.
+func (p RouteServiceProvider) globalMiddlewareStack(c di.Container) []route.Middleware {
+	containerResolver := middleware.ContainerResolver{c}.Handle
+
+	return []route.Middleware{
+		containerResolver,
+		middleware.IsInMaintenanceMode,
+	}
+
 }
