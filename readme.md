@@ -2,23 +2,23 @@
 
 The Go Framework.
 
------
-
 > Gostalt is a clean, minimal framework for the Go programming language.
 > It aims to offer just enough, whilst also eliminating a number
 > of pain points when creating new Go projects.
 
+> ⚠️ **Gostalt is nowhere near a v1.0.0 release, but you're welcome
+> to take a look around, pinch parts that interest you or attempt
+> to use it to create an app.**
+
 Feature highlights include:
 
-- Easy route registration
-- App-wide and route-group middleware
-- DI Container
-- Config resolution using `.env` files
-- Database migrations
-- Commands and scheduled jobs
-- Automatic SSL certificate generation
-
------
+-   Easy route registration
+-   App-wide and route-group middleware
+-   DI Container
+-   Config resolution using `.env` files
+-   Database migrations
+-   Commands and scheduled jobs
+-   Automatic SSL certificate generation
 
 ## Installation
 
@@ -160,7 +160,6 @@ Views use the built-in Go `html/template` package. View files are
 `.html` files and should be stored in the `resources/views`
 directory. You can nest folders in this directory as deep as you'd
 like.
-
 
 ### Executing Views
 
@@ -343,7 +342,7 @@ Provider whilst still implementing the `Provider` interface.
 Of course, you can override the `Register` and `Boot` methods
 of the `BaseServiceProvider` by defining them on your new provider.
 
-> The naming is obvious, but you should only *Register* items
+> The naming is obvious, but you should only _Register_ items
 > into the container in the `Register` method. If you attempt
 > anything else in the Register method, the service may not
 > yet have been created.
