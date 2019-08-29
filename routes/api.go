@@ -10,5 +10,5 @@ import (
 )
 
 var API = route.Collection(
-	route.Get("/welcome", http.Handler(http.HandlerFunc(api.Welcome))),
+	route.Get("/welcome", http.HandlerFunc(api.Welcome)),
 ).Prefix("api").Middleware(mw.AddJSONContentTypeHeader)

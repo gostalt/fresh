@@ -10,5 +10,5 @@ import (
 )
 
 var Web = route.Collection(
-	route.Get("/", http.Handler(http.HandlerFunc(web.Welcome))),
+	route.Get("/", http.HandlerFunc(web.Welcome)),
 ).Middleware(mw.AddURIParametersToRequest)
