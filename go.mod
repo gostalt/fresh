@@ -4,7 +4,7 @@ go 1.12
 
 require (
 	github.com/gorilla/mux v1.7.3
-	github.com/gostalt/framework v1.0.0
+	github.com/gostalt/framework v0.0.0-20190826202117-cc91cfd4a1d5
 	github.com/gostalt/logger v1.0.0
 	github.com/gostalt/validate v0.3.0
 	github.com/jmoiron/sqlx v1.2.0
@@ -20,5 +20,3 @@ require (
 	golang.org/x/crypto v0.0.0-20190605123033-f99c8df09eb5
 	google.golang.org/appengine v1.6.1 // indirect
 )
-
-replace github.com/gostalt/framework => ../gostalt-framework
