@@ -79,10 +79,6 @@ func (a *App) Run() error {
 		logger := a.Container.Get("logger").(logger.Logger)
 		message := fmt.Sprintf("Server running at %s", config.Get("app", "address"))
 		logger.Info([]byte(message))
-		return srv.ListenAndServeTLS(
-			config.Get("app", "certificate_directory")+"/cert.pem",
-			config.Get("app", "certificate_directory")+"/key.pem",
-		)
+		return srv.ListenAndServe()
 	}
-
 }
