@@ -46,8 +46,26 @@ func loadEnviron() map[string]string {
 
 	for _, value := range os.Environ() {
 		vals := strings.Split(value, "=")
-		environ[vals[0]] = vals[1]
+
+		for _, exclusion := range environExclusions() {
+			if vals[0] == exclusion {
+				continue
+			}
+
+			environ[vals[0]] = vals[1]
+		}
 	}
 
 	return environ
+}
+
+// environExclusions returns the environment variables that should
+// not be available within the Gostalt app.
+func environExclusions() []string {
+	return []string{
+		"SHELL",
+		"USER",
+		"PATH",
+		"LANG",
+	}
 }
