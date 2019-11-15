@@ -1,13 +1,16 @@
 package services
 
 import (
+	"context"
 	"database/sql"
+	"gostalt/app/entity"
 	"gostalt/config"
 
 	// Import the postgres driver for the database.
 	"github.com/gostalt/framework/service"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
+	_ "github.com/mattn/go-sqlite3"
 
 	"github.com/sarulabs/di"
 )
@@ -30,6 +33,25 @@ func (p DatabaseServiceProvider) Register(b *di.Builder) {
 			}
 
 			return db, nil
+		},
+	})
+
+	b.Add(di.Def{
+		Name: "entity-client",
+		Build: func(c di.Container) (interface{}, error) {
+			client, err := entity.Open(
+				config.Get("database", "driver"),
+				config.Get("database", "string"),
+			)
+			if err != nil {
+				return nil, err
+			}
+
+			if err := client.Schema.Create(context.Background()); err != nil {
+				return nil, err
+			}
+
+			return client, nil
 		},
 	})
 
