@@ -1,6 +1,7 @@
 package services
 
 import (
+	"gostalt/config"
 	"html/template"
 	"io/ioutil"
 	"log"
@@ -21,11 +22,19 @@ type ViewServiceProvider struct {
 var path = "resources/views"
 
 func (p ViewServiceProvider) Register(b *di.Builder) {
+	shared := config.Get("app", "environment") != "production"
+
 	b.Add(di.Def{
 		Name: "views",
 		Build: func(c di.Container) (interface{}, error) {
 			return load(path), nil
 		},
+
+		// If the app's environment is not production, then set this
+		// definition to `Unshare`. This means that a new instance
+		// will be created per request, which is inefficient,
+		// but useful for testing.
+		Unshared: shared,
 	})
 }
 
