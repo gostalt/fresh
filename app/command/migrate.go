@@ -1,20 +1,25 @@
 package command
 
 import (
-	"database/sql"
+	"context"
 	"gostalt/app"
-	"gostalt/config"
+	"gostalt/app/entity"
+	"gostalt/app/entity/migrate"
+	"log"
+	"os"
 
-	"github.com/pressly/goose"
-
+	"github.com/facebookincubator/ent/dialect/sql/schema"
 	"github.com/spf13/cobra"
 )
 
+var dryrun bool
+var destructive bool
+
 func init() {
-	migrateCmd.AddCommand(migrateCreateCmd)
-	migrateCmd.AddCommand(migrateUpCmd)
-	migrateCmd.AddCommand(migrateDownCmd)
-	migrateCmd.AddCommand(migrateMagicCmd)
+	migrateUpdateCmd.Flags().BoolVar(&dryrun, "dryrun", false, "Print SQL to logs")
+	migrateUpdateCmd.Flags().BoolVar(&destructive, "destructive", false, "Allow columns and indexes to be dropped")
+
+	migrateCmd.AddCommand(migrateUpdateCmd)
 
 	rootCmd.AddCommand(migrateCmd)
 }
@@ -24,73 +29,35 @@ var migrateCmd = &cobra.Command{
 	Short: "Handle database migrations",
 }
 
-var migrateCreateCmd = &cobra.Command{
-	Use:   "create",
-	Short: "Create a new database migration",
-	// Args[0] is the name of the migration
-	Args: cobra.ExactArgs(1),
+var migrateUpdateCmd = &cobra.Command{
+	Use:   "update",
+	Short: "Update database tables using current entity data",
 	Run: func(cmd *cobra.Command, args []string) {
 		a := app.Make()
-		db := a.Container.Get("database-basic").(*sql.DB)
+		client := a.Container.Get("entity-client").(*entity.Client)
 
-		if err := goose.Create(
-			db,
-			config.Get("database", "migration_directory"),
-			args[0],
-			"sql",
-		); err != nil {
-			panic(err)
+		ctx := context.Background()
+		var opts []schema.MigrateOption
+
+		if destructive {
+			opts = []schema.MigrateOption{
+				migrate.WithDropIndex(true),
+				migrate.WithDropColumn(true),
+			}
 		}
-	},
-}
 
-var migrateUpCmd = &cobra.Command{
-	Use:   "up",
-	Short: "Run all pending migrations on the database",
-	Run: func(cmd *cobra.Command, args []string) {
-		a := app.Make()
-		db := a.Container.Get("database-basic").(*sql.DB)
+		if dryrun {
+			// If the dryrun flag is checked, print the SQL to the
+			// stdout and stop.
+			if err := client.Schema.WriteTo(ctx, os.Stdout, opts...); err != nil {
+				log.Fatalln("Unable to dryrun migration:", err)
+			}
 
-		if err := goose.Up(
-			db,
-			config.Get("database", "migration_directory"),
-		); err != nil {
-			panic(err)
+			return
 		}
-	},
-}
 
-var migrateDownCmd = &cobra.Command{
-	Use:   "down",
-	Short: "Drop the most recent migration",
-	Run: func(cmd *cobra.Command, args []string) {
-		a := app.Make()
-		db := a.Container.Get("database-basic").(*sql.DB)
-
-		if err := goose.Down(
-			db,
-			config.Get("database", "migration_directory"),
-		); err != nil {
-			panic(err)
-		}
-	},
-}
-
-var migrateMagicCmd = &cobra.Command{
-	Use:   "magic",
-	Short: "Creates a magic migration from an entity",
-	Args:  cobra.ExactArgs(1),
-	Run: func(cmd *cobra.Command, args []string) {
-		a := app.Make()
-		db := a.Container.Get("database-basic").(*sql.DB)
-
-		if err := goose.Create(
-			db,
-			config.Get("database", "migration_directory"),
-			args[0],
-			"sql",
-		); err != nil {
-			panic(err)
+		if err := client.Schema.Create(context.Background(), opts...); err != nil {
+			log.Fatalln(err)
 		}
 	},
 }

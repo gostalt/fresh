@@ -9,12 +9,12 @@ import (
 
 // User holds the schema definition for the User entity.
 type User struct {
-    ent.Schema
+	ent.Schema
 }
 
 // Fields of the User.
 func (User) Fields() []ent.Field {
-    return []ent.Field{
-        field.String("name").Default("unknown"),
-    }
+	return []ent.Field{
+		field.String("name").Default("unknown"),
+	}
 }
