@@ -10,7 +10,6 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/gostalt/logger"
-	"github.com/joho/godotenv"
 	"github.com/sarulabs/di"
 	"golang.org/x/crypto/acme/autocert"
 )
@@ -23,13 +22,7 @@ type App struct {
 // Make creates an instance of our app and fills the Container
 // using the ServiceProviders defined in services.Providers.
 func Make() *App {
-	// Load the .env file into the app, and use it to populate
-	// the different config domains defined in `./config`.
-	if env, err := godotenv.Read(); err != nil {
-		panic("unable to load environment")
-	} else {
-		config.Load(env)
-	}
+	config.Load()
 
 	// Create a new builder that will be used to populated and
 	// used to create the app dependency injection container.

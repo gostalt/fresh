@@ -1,8 +1,15 @@
 package config
 
+import (
+	"os"
+	"strings"
+
+	"github.com/joho/godotenv"
+)
+
 var cfg map[string]map[string]string
 
-func Load(env map[string]string) map[string]map[string]string {
+func Load() map[string]map[string]string {
 	// If the number of items in cfg is greater than zero, then
 	// the config has already been loaded and we don't need to
 	// reload it.
@@ -10,13 +17,17 @@ func Load(env map[string]string) map[string]map[string]string {
 		return cfg
 	}
 
+	godotenv.Overload(".env")
+
+	environ := loadEnviron()
+
 	// TODO: Would be ideal to map these dynamically for each
 	// file that does exist in the config directory.
 	cfg = map[string]map[string]string{
-		"app":      app(env),
-		"database": database(env),
-		"logging":  logging(env),
-		"maker":    maker(env),
+		"app":      app(environ),
+		"database": database(environ),
+		"logging":  logging(environ),
+		"maker":    maker(environ),
 	}
 
 	return cfg
@@ -26,4 +37,17 @@ func Load(env map[string]string) map[string]map[string]string {
 // existant domain or key will return an empty string.
 func Get(domain string, key string) string {
 	return cfg[domain][key]
+}
+
+// loadEnviron turns the current environment's variables into a
+// map that can be used inside each config file.
+func loadEnviron() map[string]string {
+	environ := make(map[string]string)
+
+	for _, value := range os.Environ() {
+		vals := strings.Split(value, "=")
+		environ[vals[0]] = vals[1]
+	}
+
+	return environ
 }
