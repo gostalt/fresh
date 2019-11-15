@@ -1,15 +1,9 @@
 package command
 
 import (
-	"database/sql"
-	"fmt"
 	"gostalt/app"
-	"gostalt/config"
-	"sync"
 
 	"github.com/gostalt/framework/maker"
-	"github.com/gostalt/logger"
-	"github.com/pressly/goose"
 	"github.com/spf13/cobra"
 )
 
@@ -28,99 +22,12 @@ example, "api.Welcome" would become api/Welcome.go`,
 		app := app.Make()
 		handler := args[0]
 
-		createHandler(handler, app)
+		m := app.Container.Get("HandlerMaker").(maker.HandlerMaker)
+		m.Make(handler)
 	},
-}
-
-func createHandler(handler string, app *app.App) {
-	m := app.Container.Get("HandlerMaker").(maker.HandlerMaker)
-	m.Make(handler)
-}
-
-var makeRepositoryCmd = &cobra.Command{
-	Use:   "repository",
-	Short: "Make a repository",
-	Args:  cobra.ExactArgs(1),
-	Run: func(cmd *cobra.Command, args []string) {
-		app := app.Make()
-
-		go createRepository(args[0], app, nil)
-	},
-}
-
-var makeEntityCmd = &cobra.Command{
-	Use:   "entity",
-	Short: "Make an entity",
-	Args:  cobra.ExactArgs(1),
-	Run: func(cmd *cobra.Command, args []string) {
-		var wg sync.WaitGroup
-		name := args[0]
-
-		app := app.Make()
-
-		cmd.ParseFlags(args)
-		migration := cmd.Flag("migration")
-		repository := cmd.Flag("repository")
-
-		if migration.Value.String() == "true" {
-			wg.Add(1)
-			path := fmt.Sprintf("create_%s_table", name)
-			go createMigration(path, app, &wg)
-		}
-
-		if repository.Value.String() == "true" {
-			wg.Add(1)
-			go createRepository(name, app, &wg)
-		}
-
-		wg.Add(1)
-		go createEntity(name, app, &wg)
-
-		wg.Wait()
-	},
-}
-
-// TODO: The createMigration call shouldn't really live here,
-// it should hand off to some sort of service to do the heavy lifting.
-
-func createMigration(path string, app *app.App, wg *sync.WaitGroup) {
-	db := app.Container.Get("database-basic").(*sql.DB)
-
-	if err := goose.Create(
-		db,
-		config.Get("database", "migration_directory"),
-		path,
-		"sql",
-	); err != nil {
-		panic(err)
-	}
-
-	wg.Done()
-}
-
-func createRepository(name string, app *app.App, wg *sync.WaitGroup) {
-	m := app.Container.Get("RepositoryMaker").(maker.RepositoryMaker)
-	m.Make(name)
-
-	l := app.Container.Get("logger").(logger.Logger)
-	l.Info([]byte("repository created"))
-	wg.Done()
-}
-
-func createEntity(name string, app *app.App, wg *sync.WaitGroup) {
-	m := app.Container.Get("EntityMaker").(maker.EntityMaker)
-	m.Make(name)
-
-	l := app.Container.Get("logger").(logger.Logger)
-	l.Info([]byte("entity created"))
-	wg.Done()
 }
 
 func init() {
-	makeEntityCmd.Flags().BoolP("migration", "m", false, "Generate a migration file for this entity")
-	makeEntityCmd.Flags().BoolP("repository", "r", false, "Generate a repository for this entity")
-	makeCmd.AddCommand(makeEntityCmd)
-	makeCmd.AddCommand(makeRepositoryCmd)
 	makeCmd.AddCommand(makeHandlerCmd)
 	rootCmd.AddCommand(makeCmd)
 }
