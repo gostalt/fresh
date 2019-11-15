@@ -2,6 +2,7 @@ package app
 
 import (
 	"crypto/tls"
+	"errors"
 	"fmt"
 	"gostalt/app/services"
 	"gostalt/config"
@@ -48,6 +49,10 @@ func Make() *App {
 
 // Run uses the configured App to start a Web Server.
 func (a *App) Run() error {
+	if config.Get("app", "address") == "" && config.Get("app", "environment") != "production" {
+		return errors.New("app cannot run. No address can be found in the environment")
+	}
+
 	srv := &http.Server{
 		Handler:      a.Container.Get("router").(*mux.Router),
 		Addr:         config.Get("app", "address"),
