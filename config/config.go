@@ -52,7 +52,7 @@ func loadEnviron() map[string]string {
 				continue
 			}
 
-			environ[vals[0]] = vals[1]
+			environ[vals[0]] = strings.Join(vals[1:], "=")
 		}
 	}
 
