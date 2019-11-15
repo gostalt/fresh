@@ -2,7 +2,7 @@ package services
 
 import (
 	"github.com/gostalt/framework/service"
-	"github.com/sarulabs/di"
+	"github.com/sarulabs/di/v2"
 )
 
 // AppServiceProvider is a more generic ServiceProvider that you

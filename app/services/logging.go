@@ -6,7 +6,7 @@ import (
 
 	"github.com/gostalt/framework/service"
 	"github.com/gostalt/logger"
-	"github.com/sarulabs/di"
+	"github.com/sarulabs/di/v2"
 )
 
 type LoggingServiceProvider struct {

@@ -9,7 +9,7 @@ import (
 	"github.com/gostalt/framework/service"
 
 	"github.com/gorilla/mux"
-	"github.com/sarulabs/di"
+	"github.com/sarulabs/di/v2"
 )
 
 // RouteServiceProvider is responsible for registering the app's

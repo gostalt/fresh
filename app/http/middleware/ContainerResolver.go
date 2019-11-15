@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/sarulabs/di"
+	"github.com/sarulabs/di/v2"
 )
 
 type ContainerResolver struct {

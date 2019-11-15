@@ -11,7 +11,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/gostalt/logger"
-	"github.com/sarulabs/di"
+	"github.com/sarulabs/di/v2"
 	"golang.org/x/crypto/acme/autocert"
 )
 

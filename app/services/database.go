@@ -12,7 +12,7 @@ import (
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
 
-	"github.com/sarulabs/di"
+	"github.com/sarulabs/di/v2"
 )
 
 type DatabaseServiceProvider struct {

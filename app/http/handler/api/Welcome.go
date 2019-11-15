@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gostalt/validate"
-	"github.com/sarulabs/di"
+	"github.com/sarulabs/di/v2"
 )
 
 func Welcome(w http.ResponseWriter, r *http.Request) {

@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/gostalt/framework/service"
-	"github.com/sarulabs/di"
+	"github.com/sarulabs/di/v2"
 )
 
 type ViewServiceProvider struct {

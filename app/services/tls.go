@@ -6,7 +6,7 @@ import (
 	"gostalt/config"
 
 	"github.com/gostalt/framework/service"
-	"github.com/sarulabs/di"
+	"github.com/sarulabs/di/v2"
 	"golang.org/x/crypto/acme/autocert"
 )
 

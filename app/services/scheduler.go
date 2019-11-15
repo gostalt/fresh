@@ -3,7 +3,7 @@ package services
 import (
 	"github.com/gostalt/framework/schedule"
 	"github.com/gostalt/framework/service"
-	"github.com/sarulabs/di"
+	"github.com/sarulabs/di/v2"
 )
 
 type SchedulerServiceProvider struct {
