@@ -32,6 +32,8 @@ github.com/gorilla/mux v1.7.3/go.mod h1:1lud6UwP+6orDFRuTfBEV8e9/aOM/c4fVVCaMa2z
 github.com/gorilla/websocket v1.4.0/go.mod h1:E7qHFY5m1UJ88s3WnNqhKjPHQ0heANvMoAMk2YaljkQ=
 github.com/gostalt/framework v0.0.0-20191115144526-0190e528a62c h1:iTPnY/Grst5ZdHB33F0QJglX5BZEaPIOm6hnHlOQe0c=
 github.com/gostalt/framework v0.0.0-20191115144526-0190e528a62c/go.mod h1:9AYA2SpMQd8ZGBRRygprRzEu7xc29hVPqk818N0r5Xo=
+github.com/gostalt/framework v0.0.0-20191125171524-01cdcb3609ba h1:qQDE5BkTAwxt87F5MbFp/PiP0cj6NlxnF6kqIWMgq8M=
+github.com/gostalt/framework v0.0.0-20191125171524-01cdcb3609ba/go.mod h1:9AYA2SpMQd8ZGBRRygprRzEu7xc29hVPqk818N0r5Xo=
 github.com/gostalt/logger v1.0.0 h1:/0zOilvcnB3U3S21EN2r9RJrKKgTh6TqwwHhEjrR83U=
 github.com/gostalt/logger v1.0.0/go.mod h1:/tUyW+8jsTJwbFCJCA/u7/jGjx/Dl2FowAyFx9IPv84=
 github.com/gostalt/validate v1.0.0 h1:Uy5RJD9YFLAlhYhCj2xR1B9nwyyKosLsdl+FMPY07eM=

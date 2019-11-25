@@ -13,7 +13,7 @@ var scheduleCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		a := app.Make()
 
-		scheduler := a.Container.Get("scheduler").(schedule.Runner)
+		scheduler := a.Container.Get("scheduler").(*schedule.Runner)
 
 		scheduler.Run()
 	},
