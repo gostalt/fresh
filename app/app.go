@@ -15,7 +15,6 @@ import (
 	"golang.org/x/crypto/acme/autocert"
 )
 
-// App is where the magic happens.
 type App struct {
 	Container di.Container
 }
@@ -49,34 +48,36 @@ func Make() *App {
 
 // Run uses the configured App to start a Web Server.
 func (a *App) Run() error {
-	if config.Get("app", "address") == "" && config.Get("app", "environment") != "production" {
+	address := config.Get("app", "address")
+	if config.Get("app", "environment") == "production" {
+		address = ":443"
+	}
+
+	if address == "" {
 		return errors.New("app cannot run. No address can be found in the environment")
 	}
 
 	srv := &http.Server{
 		Handler:      a.Container.Get("router").(*mux.Router),
-		Addr:         config.Get("app", "address"),
+		Addr:         address,
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
-		IdleTimeout:  120 * time.Second,
+		IdleTimeout:  2 * time.Minute,
 	}
+
+	logger := a.Container.Get("logger").(logger.Logger)
+	message := fmt.Sprintf("Server running at %s", address)
+	logger.Info([]byte(message))
 
 	if config.Get("app", "environment") == "production" {
 		le := a.Container.Get("autocert").(*autocert.Manager)
 		srv.TLSConfig = &tls.Config{GetCertificate: le.GetCertificate}
 
-		// In production, the server address should just be 443.
-		srv.Addr = ":443"
-
 		// A non-TLS ListenAndServe is used here so Let's Encrypt
 		// can use HTTP Challenge to make a new certificate.
 		go http.ListenAndServe(":80", le.HTTPHandler(nil))
-
 		return srv.ListenAndServeTLS("", "")
 	} else {
-		logger := a.Container.Get("logger").(logger.Logger)
-		message := fmt.Sprintf("Server running at %s", config.Get("app", "address"))
-		logger.Info([]byte(message))
 		return srv.ListenAndServe()
 	}
 }
