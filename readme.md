@@ -2,6 +2,8 @@
 
 The Go Framework.
 
+[![Code Report](https://goreportcard.com/badge/github.com/gostalt/gostalt)](https://goreportcard.com/report/github.com/gostalt/gostalt)
+
 > Gostalt is a clean, minimal framework for the Go programming language.
 > It aims to offer just enough, whilst also eliminating a number
 > of pain points when creating new Go projects.
