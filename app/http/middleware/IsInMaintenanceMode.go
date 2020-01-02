@@ -6,7 +6,7 @@ import (
 )
 
 // IsInMaintenanceMode restricts access to your application by
-// returning a 503 Service Unavailable repsonse on all requests.
+// returning a 503 Service Unavailable response on all requests.
 // You can start Maintenance Mode by running
 //
 //     ./gostalt maintenance up

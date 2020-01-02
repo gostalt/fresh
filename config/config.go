@@ -34,7 +34,7 @@ func Load() map[string]map[string]string {
 }
 
 // Get returns the value of a key from a specific domain. A non-
-// existant domain or key will return an empty string.
+// existent domain or key will return an empty string.
 func Get(domain string, key string) string {
 	return cfg[domain][key]
 }
