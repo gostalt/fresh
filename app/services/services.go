@@ -12,6 +12,7 @@ var Providers = []service.Provider{
 	&ViewServiceProvider{},
 	&LoggingServiceProvider{},
 	&SchedulerServiceProvider{},
+	&SessionServiceProvider{},
 
 	// Below are non-local services that are required by the
 	// Gostalt framework. Remove at your own peril!
