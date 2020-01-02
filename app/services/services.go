@@ -6,13 +6,14 @@ import "github.com/gostalt/framework/service"
 // and booted by the app when it is launched.
 var Providers = []service.Provider{
 	&AppServiceProvider{},
+	&AuthServiceProvider{},
 	&DatabaseServiceProvider{},
-	&TLSServiceProvider{},
-	&RouteServiceProvider{},
-	&ViewServiceProvider{},
 	&LoggingServiceProvider{},
+	&RouteServiceProvider{},
 	&SchedulerServiceProvider{},
 	&SessionServiceProvider{},
+	&TLSServiceProvider{},
+	&ViewServiceProvider{},
 
 	// Below are non-local services that are required by the
 	// Gostalt framework. Remove at your own peril!
