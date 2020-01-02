@@ -12,6 +12,7 @@ require (
 
 	github.com/joho/godotenv v1.3.0
 	github.com/lib/pq v1.2.0
+	github.com/logrusorgru/aurora v0.0.0-20200102142835-e9ef32dff381
 	github.com/mattn/go-sqlite3 v1.11.0
 	github.com/sarulabs/di/v2 v2.3.0
 	github.com/spf13/cobra v0.0.5
