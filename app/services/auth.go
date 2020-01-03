@@ -3,7 +3,7 @@ package services
 import (
 	"encoding/gob"
 	"gostalt/app/entity"
-	"gostalt/app/http"
+	"gostalt/app/http/handler/auth"
 
 	"github.com/gorilla/sessions"
 	"github.com/gostalt/framework/service"
@@ -19,7 +19,7 @@ func (p AuthServiceProvider) Register(b *di.Builder) {
 		Name: "auth",
 		Build: func(c di.Container) (interface{}, error) {
 			store := c.Get("session").(*sessions.CookieStore)
-			return http.Auth{Store: store}, nil
+			return auth.NewProvider(store), nil
 		},
 	})
 }
