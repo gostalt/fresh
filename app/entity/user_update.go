@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"gostalt/app/entity/predicate"
 	"gostalt/app/entity/user"
+	"time"
 
 	"github.com/facebookincubator/ent/dialect/sql"
 )
@@ -14,7 +15,10 @@ import (
 // UserUpdate is the builder for updating User entities.
 type UserUpdate struct {
 	config
-	name       *string
+	username   *string
+	password   *string
+	created_at *time.Time
+	updated_at *time.Time
 	predicates []predicate.User
 }
 
@@ -24,22 +28,44 @@ func (uu *UserUpdate) Where(ps ...predicate.User) *UserUpdate {
 	return uu
 }
 
-// SetName sets the name field.
-func (uu *UserUpdate) SetName(s string) *UserUpdate {
-	uu.name = &s
+// SetUsername sets the username field.
+func (uu *UserUpdate) SetUsername(s string) *UserUpdate {
+	uu.username = &s
 	return uu
 }
 
-// SetNillableName sets the name field if the given value is not nil.
-func (uu *UserUpdate) SetNillableName(s *string) *UserUpdate {
-	if s != nil {
-		uu.SetName(*s)
+// SetPassword sets the password field.
+func (uu *UserUpdate) SetPassword(s string) *UserUpdate {
+	uu.password = &s
+	return uu
+}
+
+// SetCreatedAt sets the created_at field.
+func (uu *UserUpdate) SetCreatedAt(t time.Time) *UserUpdate {
+	uu.created_at = &t
+	return uu
+}
+
+// SetNillableCreatedAt sets the created_at field if the given value is not nil.
+func (uu *UserUpdate) SetNillableCreatedAt(t *time.Time) *UserUpdate {
+	if t != nil {
+		uu.SetCreatedAt(*t)
 	}
+	return uu
+}
+
+// SetUpdatedAt sets the updated_at field.
+func (uu *UserUpdate) SetUpdatedAt(t time.Time) *UserUpdate {
+	uu.updated_at = &t
 	return uu
 }
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (uu *UserUpdate) Save(ctx context.Context) (int, error) {
+	if uu.updated_at == nil {
+		v := user.UpdateDefaultUpdatedAt()
+		uu.updated_at = &v
+	}
 	return uu.sqlSave(ctx)
 }
 
@@ -99,8 +125,17 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		res     sql.Result
 		updater = builder.Update(user.Table).Where(sql.InInts(user.FieldID, ids...))
 	)
-	if value := uu.name; value != nil {
-		updater.Set(user.FieldName, *value)
+	if value := uu.username; value != nil {
+		updater.Set(user.FieldUsername, *value)
+	}
+	if value := uu.password; value != nil {
+		updater.Set(user.FieldPassword, *value)
+	}
+	if value := uu.created_at; value != nil {
+		updater.Set(user.FieldCreatedAt, *value)
+	}
+	if value := uu.updated_at; value != nil {
+		updater.Set(user.FieldUpdatedAt, *value)
 	}
 	if !updater.Empty() {
 		query, args := updater.Query()
@@ -117,26 +152,51 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // UserUpdateOne is the builder for updating a single User entity.
 type UserUpdateOne struct {
 	config
-	id   int
-	name *string
+	id         int
+	username   *string
+	password   *string
+	created_at *time.Time
+	updated_at *time.Time
 }
 
-// SetName sets the name field.
-func (uuo *UserUpdateOne) SetName(s string) *UserUpdateOne {
-	uuo.name = &s
+// SetUsername sets the username field.
+func (uuo *UserUpdateOne) SetUsername(s string) *UserUpdateOne {
+	uuo.username = &s
 	return uuo
 }
 
-// SetNillableName sets the name field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableName(s *string) *UserUpdateOne {
-	if s != nil {
-		uuo.SetName(*s)
+// SetPassword sets the password field.
+func (uuo *UserUpdateOne) SetPassword(s string) *UserUpdateOne {
+	uuo.password = &s
+	return uuo
+}
+
+// SetCreatedAt sets the created_at field.
+func (uuo *UserUpdateOne) SetCreatedAt(t time.Time) *UserUpdateOne {
+	uuo.created_at = &t
+	return uuo
+}
+
+// SetNillableCreatedAt sets the created_at field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableCreatedAt(t *time.Time) *UserUpdateOne {
+	if t != nil {
+		uuo.SetCreatedAt(*t)
 	}
+	return uuo
+}
+
+// SetUpdatedAt sets the updated_at field.
+func (uuo *UserUpdateOne) SetUpdatedAt(t time.Time) *UserUpdateOne {
+	uuo.updated_at = &t
 	return uuo
 }
 
 // Save executes the query and returns the updated entity.
 func (uuo *UserUpdateOne) Save(ctx context.Context) (*User, error) {
+	if uuo.updated_at == nil {
+		v := user.UpdateDefaultUpdatedAt()
+		uuo.updated_at = &v
+	}
 	return uuo.sqlSave(ctx)
 }
 
@@ -199,9 +259,21 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (u *User, err error) {
 		res     sql.Result
 		updater = builder.Update(user.Table).Where(sql.InInts(user.FieldID, ids...))
 	)
-	if value := uuo.name; value != nil {
-		updater.Set(user.FieldName, *value)
-		u.Name = *value
+	if value := uuo.username; value != nil {
+		updater.Set(user.FieldUsername, *value)
+		u.Username = *value
+	}
+	if value := uuo.password; value != nil {
+		updater.Set(user.FieldPassword, *value)
+		u.Password = *value
+	}
+	if value := uuo.created_at; value != nil {
+		updater.Set(user.FieldCreatedAt, *value)
+		u.CreatedAt = *value
+	}
+	if value := uuo.updated_at; value != nil {
+		updater.Set(user.FieldUpdatedAt, *value)
+		u.UpdatedAt = *value
 	}
 	if !updater.Empty() {
 		query, args := updater.Query()

@@ -5,6 +5,7 @@ package entity
 import (
 	"context"
 	"log"
+	"time"
 
 	"github.com/facebookincubator/ent/dialect/sql"
 )
@@ -31,7 +32,10 @@ func ExampleUser() {
 	// create user vertex with its edges.
 	u := client.User.
 		Create().
-		SetName("string").
+		SetUsername("string").
+		SetPassword("string").
+		SetCreatedAt(time.Now()).
+		SetUpdatedAt(time.Now()).
 		SaveX(ctx)
 	log.Println("user created:", u)
 

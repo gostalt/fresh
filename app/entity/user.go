@@ -5,6 +5,7 @@ package entity
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/facebookincubator/ent/dialect/sql"
 )
@@ -14,25 +15,40 @@ type User struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
-	// Name holds the value of the "name" field.
-	Name string `json:"name,omitempty"`
+	// Username holds the value of the "username" field.
+	Username string `json:"username,omitempty"`
+	// Password holds the value of the "password" field.
+	Password string `json:"password,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// UpdatedAt holds the value of the "updated_at" field.
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
 }
 
 // FromRows scans the sql response data into User.
 func (u *User) FromRows(rows *sql.Rows) error {
 	var scanu struct {
-		ID   int
-		Name sql.NullString
+		ID        int
+		Username  sql.NullString
+		Password  sql.NullString
+		CreatedAt sql.NullTime
+		UpdatedAt sql.NullTime
 	}
 	// the order here should be the same as in the `user.Columns`.
 	if err := rows.Scan(
 		&scanu.ID,
-		&scanu.Name,
+		&scanu.Username,
+		&scanu.Password,
+		&scanu.CreatedAt,
+		&scanu.UpdatedAt,
 	); err != nil {
 		return err
 	}
 	u.ID = scanu.ID
-	u.Name = scanu.Name.String
+	u.Username = scanu.Username.String
+	u.Password = scanu.Password.String
+	u.CreatedAt = scanu.CreatedAt.Time
+	u.UpdatedAt = scanu.UpdatedAt.Time
 	return nil
 }
 
@@ -59,8 +75,14 @@ func (u *User) String() string {
 	var builder strings.Builder
 	builder.WriteString("User(")
 	builder.WriteString(fmt.Sprintf("id=%v", u.ID))
-	builder.WriteString(", name=")
-	builder.WriteString(u.Name)
+	builder.WriteString(", username=")
+	builder.WriteString(u.Username)
+	builder.WriteString(", password=")
+	builder.WriteString(u.Password)
+	builder.WriteString(", created_at=")
+	builder.WriteString(u.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", updated_at=")
+	builder.WriteString(u.UpdatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

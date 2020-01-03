@@ -4,7 +4,9 @@ package entity
 
 import (
 	"context"
+	"errors"
 	"gostalt/app/entity/user"
+	"time"
 
 	"github.com/facebookincubator/ent/dialect/sql"
 )
@@ -12,28 +14,67 @@ import (
 // UserCreate is the builder for creating a User entity.
 type UserCreate struct {
 	config
-	name *string
+	username   *string
+	password   *string
+	created_at *time.Time
+	updated_at *time.Time
 }
 
-// SetName sets the name field.
-func (uc *UserCreate) SetName(s string) *UserCreate {
-	uc.name = &s
+// SetUsername sets the username field.
+func (uc *UserCreate) SetUsername(s string) *UserCreate {
+	uc.username = &s
 	return uc
 }
 
-// SetNillableName sets the name field if the given value is not nil.
-func (uc *UserCreate) SetNillableName(s *string) *UserCreate {
-	if s != nil {
-		uc.SetName(*s)
+// SetPassword sets the password field.
+func (uc *UserCreate) SetPassword(s string) *UserCreate {
+	uc.password = &s
+	return uc
+}
+
+// SetCreatedAt sets the created_at field.
+func (uc *UserCreate) SetCreatedAt(t time.Time) *UserCreate {
+	uc.created_at = &t
+	return uc
+}
+
+// SetNillableCreatedAt sets the created_at field if the given value is not nil.
+func (uc *UserCreate) SetNillableCreatedAt(t *time.Time) *UserCreate {
+	if t != nil {
+		uc.SetCreatedAt(*t)
+	}
+	return uc
+}
+
+// SetUpdatedAt sets the updated_at field.
+func (uc *UserCreate) SetUpdatedAt(t time.Time) *UserCreate {
+	uc.updated_at = &t
+	return uc
+}
+
+// SetNillableUpdatedAt sets the updated_at field if the given value is not nil.
+func (uc *UserCreate) SetNillableUpdatedAt(t *time.Time) *UserCreate {
+	if t != nil {
+		uc.SetUpdatedAt(*t)
 	}
 	return uc
 }
 
 // Save creates the User in the database.
 func (uc *UserCreate) Save(ctx context.Context) (*User, error) {
-	if uc.name == nil {
-		v := user.DefaultName
-		uc.name = &v
+	if uc.username == nil {
+		return nil, errors.New("entity: missing required field \"username\"")
+	}
+	if uc.password == nil {
+		return nil, errors.New("entity: missing required field \"password\"")
+	}
+	if uc.created_at == nil {
+		v := user.DefaultCreatedAt()
+		uc.created_at = &v
+	}
+	if uc.updated_at == nil {
+		v := user.DefaultUpdatedAt()
+		uc.updated_at = &v
 	}
 	return uc.sqlSave(ctx)
 }
@@ -57,9 +98,21 @@ func (uc *UserCreate) sqlSave(ctx context.Context) (*User, error) {
 		return nil, err
 	}
 	insert := builder.Insert(user.Table).Default()
-	if value := uc.name; value != nil {
-		insert.Set(user.FieldName, *value)
-		u.Name = *value
+	if value := uc.username; value != nil {
+		insert.Set(user.FieldUsername, *value)
+		u.Username = *value
+	}
+	if value := uc.password; value != nil {
+		insert.Set(user.FieldPassword, *value)
+		u.Password = *value
+	}
+	if value := uc.created_at; value != nil {
+		insert.Set(user.FieldCreatedAt, *value)
+		u.CreatedAt = *value
+	}
+	if value := uc.updated_at; value != nil {
+		insert.Set(user.FieldUpdatedAt, *value)
+		u.UpdatedAt = *value
 	}
 	id, err := insertLastID(ctx, tx, insert.Returning(user.FieldID))
 	if err != nil {
