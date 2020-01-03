@@ -25,3 +25,7 @@ func (User) Fields() []ent.Field {
 		field.Time("updated_at").Default(time.Now).UpdateDefault(time.Now),
 	}
 }
+
+func (User) Edges() []ent.Edge {
+	return nil
+}
