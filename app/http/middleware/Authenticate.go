@@ -19,8 +19,7 @@ func (m Authenticate) Handle(next http.Handler) http.Handler {
 
 			user := sess.Values["user"]
 			if user == "" || user == nil || err != nil {
-				// TODO: Make forbidden route customisable.
-				http.Redirect(w, r, "/forbidden", 302)
+				http.Redirect(w, r, "/login", 302)
 			}
 
 			next.ServeHTTP(w, r)
