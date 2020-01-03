@@ -7,11 +7,7 @@ import (
 	"github.com/sarulabs/di/v2"
 )
 
-type Authenticate struct {
-	di.Container
-}
-
-func (m Authenticate) Handle(next http.Handler) http.Handler {
+func Authenticate(next http.Handler) http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			store := di.Get(r, "session").(*sessions.CookieStore)
@@ -20,6 +16,7 @@ func (m Authenticate) Handle(next http.Handler) http.Handler {
 			user := sess.Values["user"]
 			if user == "" || user == nil || err != nil {
 				http.Redirect(w, r, "/login", 302)
+				return
 			}
 
 			next.ServeHTTP(w, r)
