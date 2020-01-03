@@ -16,8 +16,10 @@ func NewProvider(store *sessions.CookieStore) Provider {
 	}
 }
 
+// DefaultRedirect is the path to redirect to when a user
+// successfully logs in or registers a new account.
 func (p Provider) DefaultRedirect() string {
-	return "/"
+	return "/home"
 }
 
 func (a Provider) ProcessLogin(w http.ResponseWriter, r *http.Request, user interface{}) error {
