@@ -2,6 +2,7 @@ package auth
 
 import (
 	"gostalt/app/entity"
+	"gostalt/app/entity/user"
 	"html/template"
 	"log"
 	"net/http"
@@ -28,7 +29,14 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		store := di.Get(r, "session").(*sessions.CookieStore)
 		auth := NewProvider(store)
 
-		err = auth.ProcessLogin(w, r, entity.User{Username: "Tomy"})
+		client := di.Get(r, "entity-client").(*entity.Client)
+		u, err := client.User.Query().Where(user.UsernameEQ(r.Form.Get("username"))).First(r.Context())
+		if err != nil {
+			views.ExecuteTemplate(w, "auth.login", nil)
+			return
+		}
+
+		err = auth.ProcessLogin(w, r, u)
 		if err != nil {
 			log.Println(err)
 		}
