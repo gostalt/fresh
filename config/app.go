@@ -5,6 +5,11 @@ func app(env map[string]string) map[string]string {
 		// Name is the name of your app.
 		"name": env["APP_NAME"],
 
+		// Key is the encryption key used to secure your application.
+		// Do not commit a hardcoded value to version control, or
+		// disclose it in any way.
+		"key": env["APP_KEY"],
+
 		// Environment dictates the "environment" that the app is
 		// running in. This can be used to configure services
 		// depending on the status of the application.

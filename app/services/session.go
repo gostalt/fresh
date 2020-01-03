@@ -17,7 +17,7 @@ func (p SessionServiceProvider) Register(b *di.Builder) {
 		Name: "session",
 		Build: func(c di.Container) (interface{}, error) {
 			store := sessions.NewCookieStore(
-				[]byte(config.Get("session", "key")),
+				[]byte(config.Get("app", "key")),
 			)
 
 			store.Options = &sessions.Options{

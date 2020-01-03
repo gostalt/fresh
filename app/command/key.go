@@ -21,7 +21,7 @@ var keyCmd = &cobra.Command{
 	Short: "Prints the application key to stdout",
 	Run: func(cmd *cobra.Command, args []string) {
 		a := app.Make()
-		key := config.Get("session", "key")
+		key := config.Get("app", "key")
 		l := a.Container.Get("logger").(logger.Logger)
 
 		l.Info(
