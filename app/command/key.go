@@ -37,20 +37,22 @@ var generateKeyCmd = &cobra.Command{
 		a := app.Make()
 		l := a.Container.Get("logger").(logger.Logger)
 
-		b := make([]byte, 32)
-		rand.Read(b[:])
-		key := base64.URLEncoding.EncodeToString(b)
+		key := generateKey()
 
 		if stdout {
-			l.Info(
-				[]byte(fmt.Sprintf("Generated key is `%s`", key)),
-			)
-
+			l.Info([]byte(fmt.Sprintf("Generated key is `%s`", key)))
 			return
 		}
 
 		writeKeyToEnv(key, l)
 	},
+}
+
+func generateKey() string {
+	b := make([]byte, 32)
+	rand.Read(b[:])
+
+	return base64.URLEncoding.EncodeToString(b)
 }
 
 func writeKeyToEnv(key string, l logger.Logger) {
