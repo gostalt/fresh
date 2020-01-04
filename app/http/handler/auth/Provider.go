@@ -40,13 +40,32 @@ func (p Provider) ProcessLogin(w http.ResponseWriter, r *http.Request, user inte
 	return nil
 }
 
+// CreateUser ...
+func (p Provider) CreateUser(r *http.Request) (*entity.User, error) {
+	client := di.Get(r, "entity-client").(*entity.Client)
+
+	username := r.Form.Get("username")
+	password := r.Form.Get("password")
+
+	encrypted, _ := bcrypt.GenerateFromPassword([]byte(password), 10)
+
+	u, err := client.User.Create().SetUsername(username).SetPassword(encrypted).Save(r.Context())
+	if u == nil || err != nil {
+		return &entity.User{}, errors.New("unable to create user")
+	}
+
+	return u, nil
+}
+
 // RetrieveUser attempts to find the database record for the provided
 // login credentials. If the record cannot be found, or if the
 // password is incorrect for the user, an error is returned.
 func (p Provider) RetrieveUser(r *http.Request) (*entity.User, error) {
 	client := di.Get(r, "entity-client").(*entity.Client)
+
 	username := r.Form.Get("username")
 	password := r.Form.Get("password")
+
 	u, err := client.User.Query().Where(user.UsernameEQ(username)).First(r.Context())
 	if err != nil {
 		return &entity.User{}, errors.New("user does not exist")

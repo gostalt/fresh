@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"gostalt/app/entity"
 	"html/template"
 	"log"
 	"net/http"
@@ -9,7 +8,6 @@ import (
 	"github.com/gorilla/sessions"
 	"github.com/gostalt/validate"
 	"github.com/sarulabs/di/v2"
-	"golang.org/x/crypto/bcrypt"
 )
 
 func Register(w http.ResponseWriter, r *http.Request) {
@@ -20,29 +18,30 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == http.MethodPost {
+		// Create a new auth.Provider to handle the logic for
+		// the registration attempt.
+		store := di.Get(r, "session").(*sessions.CookieStore)
+		auth := NewProvider(store)
+
+		// First, check that the validation rules are satisfied by
+		// the request. If not, redirect to the register page
+		// with appropriate error messages for the attempt.
 		msgs, err := validate.Check(r, registerRules()...)
 		if err != nil || len(msgs) > 0 {
-			views.ExecuteTemplate(w, "auth.register", struct{ Failures validate.Message }{msgs})
+			views.ExecuteTemplate(w, "auth.register", getErrorsFromMessage(msgs))
 			return
 		}
 
-		username := r.Form.Get("username")
-		password := r.Form.Get("password")
-
-		client := di.Get(r, "entity-client").(*entity.Client)
-		// crypt := di.Get(r, "crypto").(crypto.Crypto)
-		// pw, _ := crypt.Encrypt([]byte(password))
-		// pwBytes := base64.RawURLEncoding.EncodeToString(pw)
-		encrypted, err := bcrypt.GenerateFromPassword([]byte(password), 10)
-		u, err := client.User.Create().SetUsername(username).SetPassword(encrypted).Save(r.Context())
-		if u == nil || err != nil {
-			log.Println("User", u)
-			log.Println("Error", err)
+		// Create the user ...
+		user, err := auth.CreateUser(r)
+		if err != nil {
+			views.ExecuteTemplate(w, "auth.register", []string{err.Error()})
+			return
 		}
 
-		store := di.Get(r, "session").(*sessions.CookieStore)
-		auth := NewProvider(store)
-		err = auth.ProcessLogin(w, r, u)
+		// If the attempt is successful, redirect the user to
+		// the appropriate location.
+		err = auth.ProcessLogin(w, r, user)
 		if err != nil {
 			log.Println(err)
 		}
