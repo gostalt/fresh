@@ -37,7 +37,7 @@ var generateKeyCmd = &cobra.Command{
 		a := app.Make()
 		l := a.Container.Get("logger").(logger.Logger)
 
-		b := make([]byte, 64)
+		b := make([]byte, 32)
 		rand.Read(b[:])
 		key := base64.URLEncoding.EncodeToString(b)
 
