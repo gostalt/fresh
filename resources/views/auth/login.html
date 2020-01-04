@@ -40,14 +40,12 @@
                 </div>
             </form>
 
-            {{ if .Failures }}
+            {{ if . }}
             <div class="mt-4 text-red-500">
                 <p class="font-bold">There were errors trying to log in:</p>
                 <ul class="ml-4 list-disc">
-                    {{ range .Failures }}
                     {{ range . }}
                     <li>{{ . }}</li>
-                    {{ end }}
                     {{ end }}
                 </ul>
             </div>

@@ -1,8 +1,6 @@
 package auth
 
 import (
-	"gostalt/app/entity"
-	"gostalt/app/entity/user"
 	"html/template"
 	"log"
 	"net/http"
@@ -10,7 +8,6 @@ import (
 	"github.com/gorilla/sessions"
 	"github.com/gostalt/validate"
 	"github.com/sarulabs/di/v2"
-	"golang.org/x/crypto/bcrypt"
 )
 
 func Login(w http.ResponseWriter, r *http.Request) {
@@ -21,32 +18,55 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == http.MethodPost {
-		msgs, err := validate.Check(r, loginRules()...)
-		if err != nil || len(msgs) > 0 {
-			views.ExecuteTemplate(w, "auth.login", struct{ Failures validate.Message }{msgs})
-			return
-		}
-
+		// Create a new auth.Provider to handle the logic for
+		// the login attempt.
 		store := di.Get(r, "session").(*sessions.CookieStore)
 		auth := NewProvider(store)
 
-		client := di.Get(r, "entity-client").(*entity.Client)
-		username := r.Form.Get("username")
-		password := r.Form.Get("password")
-		u, err := client.User.Query().Where(user.UsernameEQ(username)).First(r.Context())
-		if err != nil || bcrypt.CompareHashAndPassword(u.Password, []byte(password)) != nil {
-			// TODO: Return errors here about invalid password or no user found.
-			views.ExecuteTemplate(w, "auth.login", nil)
+		// First, check that the login rules are satisfied by the
+		// request. If not, redirect back to the login page with
+		// appropriate error messages for the login attempt.
+		msgs, err := validate.Check(r, loginRules()...)
+		if err != nil || len(msgs) > 0 {
+			views.ExecuteTemplate(w, "auth.login", getErrorsFromMessage(msgs))
 			return
 		}
 
-		err = auth.ProcessLogin(w, r, u)
+		// After, try to retrieve the user from the database. If
+		// the user does not exist or the password is incorrect,
+		// then the user is redirected back to the login page
+		// with an error indicating why the login failed.
+		user, err := auth.RetrieveUser(r)
+		if err != nil {
+			views.ExecuteTemplate(w, "auth.login", []string{err.Error()})
+			return
+		}
+
+		// If the login is successful, process the user's login
+		// and redirect them to the appropriate location.
+		err = auth.ProcessLogin(w, r, user)
 		if err != nil {
 			log.Println(err)
 		}
 
 		http.Redirect(w, r, auth.DefaultRedirect(), http.StatusSeeOther)
 	}
+}
+
+// getErrorsFromMessage iterates through the validation errors
+// provided by Validate and returns them as a simple slice
+// of strings.
+func getErrorsFromMessage(msgs validate.Message) []string {
+	var errors []string
+
+	for _, field := range msgs {
+		for _, msg := range field {
+			log.Println(msg)
+			errors = append(errors, msg)
+		}
+	}
+
+	return errors
 }
 
 func loginRules() []validate.Rule {
