@@ -15,7 +15,7 @@ import (
 type UserCreate struct {
 	config
 	username   *string
-	password   *string
+	password   *[]byte
 	created_at *time.Time
 	updated_at *time.Time
 }
@@ -27,8 +27,8 @@ func (uc *UserCreate) SetUsername(s string) *UserCreate {
 }
 
 // SetPassword sets the password field.
-func (uc *UserCreate) SetPassword(s string) *UserCreate {
-	uc.password = &s
+func (uc *UserCreate) SetPassword(b []byte) *UserCreate {
+	uc.password = &b
 	return uc
 }
 

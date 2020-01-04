@@ -16,7 +16,7 @@ import (
 type UserUpdate struct {
 	config
 	username   *string
-	password   *string
+	password   *[]byte
 	created_at *time.Time
 	updated_at *time.Time
 	predicates []predicate.User
@@ -35,8 +35,8 @@ func (uu *UserUpdate) SetUsername(s string) *UserUpdate {
 }
 
 // SetPassword sets the password field.
-func (uu *UserUpdate) SetPassword(s string) *UserUpdate {
-	uu.password = &s
+func (uu *UserUpdate) SetPassword(b []byte) *UserUpdate {
+	uu.password = &b
 	return uu
 }
 
@@ -154,7 +154,7 @@ type UserUpdateOne struct {
 	config
 	id         int
 	username   *string
-	password   *string
+	password   *[]byte
 	created_at *time.Time
 	updated_at *time.Time
 }
@@ -166,8 +166,8 @@ func (uuo *UserUpdateOne) SetUsername(s string) *UserUpdateOne {
 }
 
 // SetPassword sets the password field.
-func (uuo *UserUpdateOne) SetPassword(s string) *UserUpdateOne {
-	uuo.password = &s
+func (uuo *UserUpdateOne) SetPassword(b []byte) *UserUpdateOne {
+	uuo.password = &b
 	return uuo
 }
 

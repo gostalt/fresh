@@ -10,6 +10,7 @@ import (
 	"github.com/gorilla/sessions"
 	"github.com/gostalt/validate"
 	"github.com/sarulabs/di/v2"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func Login(w http.ResponseWriter, r *http.Request) {
@@ -30,8 +31,11 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		auth := NewProvider(store)
 
 		client := di.Get(r, "entity-client").(*entity.Client)
-		u, err := client.User.Query().Where(user.UsernameEQ(r.Form.Get("username"))).First(r.Context())
-		if err != nil {
+		username := r.Form.Get("username")
+		password := r.Form.Get("password")
+		u, err := client.User.Query().Where(user.UsernameEQ(username)).First(r.Context())
+		if err != nil || bcrypt.CompareHashAndPassword(u.Password, []byte(password)) != nil {
+			// TODO: Return errors here about invalid password or no user found.
 			views.ExecuteTemplate(w, "auth.login", nil)
 			return
 		}

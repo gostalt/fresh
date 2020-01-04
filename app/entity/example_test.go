@@ -33,7 +33,7 @@ func ExampleUser() {
 	u := client.User.
 		Create().
 		SetUsername("string").
-		SetPassword("string").
+		SetPassword(nil).
 		SetCreatedAt(time.Now()).
 		SetUpdatedAt(time.Now()).
 		SaveX(ctx)

@@ -9,6 +9,7 @@ import (
 	"github.com/gorilla/sessions"
 	"github.com/gostalt/validate"
 	"github.com/sarulabs/di/v2"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func Register(w http.ResponseWriter, r *http.Request) {
@@ -29,7 +30,15 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		password := r.Form.Get("password")
 
 		client := di.Get(r, "entity-client").(*entity.Client)
-		u, err := client.User.Create().SetUsername(username).SetPassword(password).Save(r.Context())
+		// crypt := di.Get(r, "crypto").(crypto.Crypto)
+		// pw, _ := crypt.Encrypt([]byte(password))
+		// pwBytes := base64.RawURLEncoding.EncodeToString(pw)
+		encrypted, err := bcrypt.GenerateFromPassword([]byte(password), 10)
+		u, err := client.User.Create().SetUsername(username).SetPassword(encrypted).Save(r.Context())
+		if u == nil || err != nil {
+			log.Println("User", u)
+			log.Println("Error", err)
+		}
 
 		store := di.Get(r, "session").(*sessions.CookieStore)
 		auth := NewProvider(store)
