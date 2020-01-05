@@ -1,7 +1,5 @@
 package config
 
-import "encoding/base64"
-
 func app(env map[string]string) map[string]string {
 	return map[string]string{
 		// Name is the name of your app.
@@ -10,7 +8,7 @@ func app(env map[string]string) map[string]string {
 		// Key is the encryption key used to secure your application.
 		// Do not commit a hardcoded value to version control, or
 		// disclose it in any way.
-		"key": getAppKey(env),
+		"key": env["APP_KEY"],
 
 		// Environment dictates the "environment" that the app is
 		// running in. This can be used to configure services
@@ -41,13 +39,4 @@ func getAddress(env map[string]string) string {
 	}
 
 	return address
-}
-
-func getAppKey(env map[string]string) string {
-	key, err := base64.URLEncoding.DecodeString(env["APP_KEY"])
-	if err != nil {
-		panic("unable to decode app key")
-	}
-
-	return string(key)
 }
