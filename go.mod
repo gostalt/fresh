@@ -6,7 +6,7 @@ require (
 	github.com/facebookincubator/ent v0.0.0-20191114223858-2b2e056f0511
 	github.com/gorilla/mux v1.7.3
 	github.com/gorilla/sessions v1.2.0
-	github.com/gostalt/framework v0.0.0-20191125171524-01cdcb3609ba
+	github.com/gostalt/framework v0.0.0-20200105111330-f7f416e1fe12
 	github.com/gostalt/logger v1.0.0
 	github.com/gostalt/validate v1.2.0
 
