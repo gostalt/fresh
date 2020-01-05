@@ -18,7 +18,7 @@ type User struct {
 	// Username holds the value of the "username" field.
 	Username string `json:"username,omitempty"`
 	// Password holds the value of the "password" field.
-	Password string `json:"password,omitempty"`
+	Password []byte `json:"password,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
@@ -30,7 +30,7 @@ func (u *User) FromRows(rows *sql.Rows) error {
 	var scanu struct {
 		ID        int
 		Username  sql.NullString
-		Password  sql.NullString
+		Password  []byte
 		CreatedAt sql.NullTime
 		UpdatedAt sql.NullTime
 	}
@@ -46,7 +46,7 @@ func (u *User) FromRows(rows *sql.Rows) error {
 	}
 	u.ID = scanu.ID
 	u.Username = scanu.Username.String
-	u.Password = scanu.Password.String
+	u.Password = scanu.Password
 	u.CreatedAt = scanu.CreatedAt.Time
 	u.UpdatedAt = scanu.UpdatedAt.Time
 	return nil
@@ -78,7 +78,7 @@ func (u *User) String() string {
 	builder.WriteString(", username=")
 	builder.WriteString(u.Username)
 	builder.WriteString(", password=")
-	builder.WriteString(u.Password)
+	builder.WriteString(fmt.Sprintf("%v", u.Password))
 	builder.WriteString(", created_at=")
 	builder.WriteString(u.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", updated_at=")

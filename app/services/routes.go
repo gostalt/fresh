@@ -19,6 +19,7 @@ type RouteServiceProvider struct {
 }
 
 var routeCollections = []*route.Group{
+	routes.Auth,
 	routes.Web,
 	routes.API,
 }
