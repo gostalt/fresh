@@ -66,8 +66,9 @@ func (a *App) Run() error {
 	}
 
 	logger := a.Container.Get("logger").(logger.Logger)
-	message := fmt.Sprintf("Server running at %s", address)
-	logger.Info([]byte(message))
+	if config.Get("app", "environment") != "production" {
+		logger.Info([]byte(fmt.Sprintf("Server running at http://%s", address)))
+	}
 
 	if config.Get("app", "environment") == "production" {
 		le := a.Container.Get("autocert").(*autocert.Manager)
