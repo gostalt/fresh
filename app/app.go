@@ -9,8 +9,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gorilla/mux"
 	"github.com/gostalt/logger"
+	"github.com/gostalt/router"
 	"github.com/sarulabs/di/v2"
 	"golang.org/x/crypto/acme/autocert"
 )
@@ -58,7 +58,7 @@ func (a *App) Run() error {
 	}
 
 	srv := &http.Server{
-		Handler:      a.Container.Get("router").(*mux.Router),
+		Handler:      a.Container.Get("router").(*router.Router),
 		Addr:         address,
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,

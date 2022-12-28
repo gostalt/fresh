@@ -5,10 +5,9 @@ import (
 	"gostalt/routes"
 	"net/http"
 
-	"github.com/gostalt/framework/route"
 	"github.com/gostalt/framework/service"
+	"github.com/gostalt/router"
 
-	"github.com/gorilla/mux"
 	"github.com/sarulabs/di/v2"
 )
 
@@ -18,27 +17,23 @@ type RouteServiceProvider struct {
 	service.BaseProvider
 }
 
-var routeCollections = []*route.Group{
-	routes.Auth,
-	routes.Web,
+type collectionParser func(*router.Router)
+
+var routeCollections = []collectionParser{
 	routes.API,
+	routes.Web,
 }
 
-// Register creates a new mux.Router instance in the container,
-// and then registers the user defined routes inside of it.
 func (p RouteServiceProvider) Register(b *di.Builder) {
 	b.Add(di.Def{
 		Name: "router",
 		Build: func(c di.Container) (interface{}, error) {
-			r := mux.NewRouter()
+			r := router.New()
 
-			// Apply the global middleware stack to the base router.
-			for _, middleware := range p.globalMiddlewareStack(c) {
-				r.Use(mux.MiddlewareFunc(middleware))
-			}
+			r.Middleware(p.globalMiddlewareStack(c)...)
 
 			for _, rc := range routeCollections {
-				route.TransformGorilla(r, rc)
+				rc(r)
 			}
 
 			p.registerFaviconRoute(r)
@@ -49,33 +44,31 @@ func (p RouteServiceProvider) Register(b *di.Builder) {
 	})
 }
 
-func (p RouteServiceProvider) registerFaviconRoute(r *mux.Router) {
-	r.Path("/favicon.ico").HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) {
-			http.ServeFile(w, r, "./public/favicon.ico")
-			return
-		},
-	)
+func (p RouteServiceProvider) registerFaviconRoute(r *router.Router) {
+	r.Get("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./public/favicon.ico")
+		return
+	})
 }
 
-func (p RouteServiceProvider) registerAssetsRoute(r *mux.Router) {
-	r.PathPrefix("/assets/").Handler(
-		http.StripPrefix(
-			"/assets/",
-			http.FileServer(http.Dir("./public")),
-		),
-	)
+func (p RouteServiceProvider) registerAssetsRoute(r *router.Router) {
+	// TODO: Add the equivalent back with the Gostalt Router.
+	// r.PathPrefix("/assets/").Handler(
+	// 	http.StripPrefix(
+	// 		"/assets/",
+	// 		http.FileServer(http.Dir("./public")),
+	// 	),
+	// )
 }
 
 // globalMiddlewareStack defines a middleware stack for the base
 // router of the application. These middleware are ran in the
 // order they are defined on every http request to the app.
-func (p RouteServiceProvider) globalMiddlewareStack(c di.Container) []route.Middleware {
+func (p RouteServiceProvider) globalMiddlewareStack(c di.Container) []router.Middleware {
 	containerResolver := middleware.ContainerResolver{c}.Handle
 
-	return []route.Middleware{
+	return []router.Middleware{
 		containerResolver,
 		middleware.IsInMaintenanceMode,
 	}
-
 }
