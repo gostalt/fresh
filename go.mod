@@ -7,7 +7,7 @@ require (
 	github.com/gorilla/sessions v1.2.0
 	github.com/gostalt/framework v0.0.0-20200105111330-f7f416e1fe12
 	github.com/gostalt/logger v1.0.0
-	github.com/gostalt/router v0.0.0-20221228224801-ccec01bf82b6
+	github.com/gostalt/router v0.0.0-20221229162035-addf76433640
 	github.com/gostalt/validate v1.2.0
 	github.com/joho/godotenv v1.3.0
 	github.com/lib/pq v1.2.0

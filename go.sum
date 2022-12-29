@@ -41,6 +41,8 @@ github.com/gostalt/router v0.0.0-20221228223117-85dd9265fc84 h1:vfZ9d1Q6jIttveeg
 github.com/gostalt/router v0.0.0-20221228223117-85dd9265fc84/go.mod h1:bCUh1yUoi47tj7l72uVNkHcTVXX5Y7g9lDspwIZabQc=
 github.com/gostalt/router v0.0.0-20221228224801-ccec01bf82b6 h1:daBJVctKaeKxjEFYe/PcLcYXbhvRSt8HOOe71U/tMJ4=
 github.com/gostalt/router v0.0.0-20221228224801-ccec01bf82b6/go.mod h1:bCUh1yUoi47tj7l72uVNkHcTVXX5Y7g9lDspwIZabQc=
+github.com/gostalt/router v0.0.0-20221229162035-addf76433640 h1:72pe6vkVekBVx5xJa7OEa0t1ERvoZfHt6iWrTDxdDik=
+github.com/gostalt/router v0.0.0-20221229162035-addf76433640/go.mod h1:bCUh1yUoi47tj7l72uVNkHcTVXX5Y7g9lDspwIZabQc=
 github.com/gostalt/validate v1.2.0 h1:LafGEpm2Shf4S26a769FoQ8Yh/Z7YfCpm2RrZeRsPNY=
 github.com/gostalt/validate v1.2.0/go.mod h1:ayVFTisHgYc5zHob2YFRkFMwxZJ3VuxjkuNUKpUuaQg=
 github.com/hashicorp/golang-lru v0.5.1/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ4Ao+sR/qLZy8=
