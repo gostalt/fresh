@@ -1,14 +1,14 @@
 package routes
 
 import (
-	"net/http"
-
-	"github.com/gostalt/framework/route"
 	mw "github.com/gostalt/framework/route/middleware"
+	"github.com/gostalt/router"
 
 	"gostalt/app/http/handler/api"
 )
 
-var API = route.Collection(
-	route.Get("/", http.HandlerFunc(api.Welcome)),
-).Prefix("api").Middleware(mw.AddJSONContentTypeHeader)
+func API(r *router.Router) {
+	r.Group(
+		router.Get("/hello", api.Welcome),
+	).Prefix("api").Middleware(mw.AddJSONContentTypeHeader)
+}

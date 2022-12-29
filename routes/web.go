@@ -1,16 +1,15 @@
 package routes
 
 import (
-	"net/http"
-
-	"github.com/gostalt/framework/route"
-	mw "github.com/gostalt/framework/route/middleware"
+	"github.com/gostalt/router"
 
 	"gostalt/app/http/handler/web"
 	"gostalt/app/http/middleware"
 )
 
-var Web = route.Collection(
-	route.Get("/", http.HandlerFunc(web.Welcome)),
-	route.Get("/home", http.HandlerFunc(web.Home)).Middleware(middleware.Authenticate),
-).Middleware(mw.AddURIParametersToRequest)
+func Web(r *router.Router) {
+	r.Group(
+		r.Get("/", web.Welcome),
+		r.Get("/home", web.Home).Middleware(middleware.Authenticate),
+	)
+}
