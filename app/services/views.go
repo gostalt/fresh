@@ -2,14 +2,17 @@ package services
 
 import (
 	"gostalt/config"
+	"gostalt/routes"
 	"html/template"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/gostalt/framework/service"
+	"github.com/gostalt/router"
 	"github.com/sarulabs/di/v2"
 )
 
@@ -17,12 +20,13 @@ type ViewServiceProvider struct {
 	service.BaseProvider
 }
 
-// path is the directory, relative to the project root, that the
-// view files will be loaded from. It is walked recursively.
-var path = "resources/views"
-
 func (p ViewServiceProvider) Register(b *di.Builder) {
-	shared := config.Get("app", "environment") != "production"
+	cache := config.Get("views", "cache") == "true"
+
+	path := config.Get("views", "path")
+	if path == "" {
+		path = "resources/views"
+	}
 
 	b.Add(di.Def{
 		Name: "views",
@@ -30,12 +34,12 @@ func (p ViewServiceProvider) Register(b *di.Builder) {
 			return load(path), nil
 		},
 
-		// If the app's environment is not production, then set this
-		// definition to `Unshare`. This means that a new instance
-		// will be created per request, which is inefficient,
-		// but useful for testing.
-		Unshared: shared,
+		Unshared: !cache,
 	})
+}
+
+func (p ViewServiceProvider) Boot(c di.Container) {
+	router.AddHandlerTransformer(p.viewHandlerTransformer)
 }
 
 // load walks through the directory provided and loads all the
@@ -101,4 +105,19 @@ func findAndParseTemplates(
 	)
 
 	return root, err
+}
+
+func (p ViewServiceProvider) viewHandlerTransformer(val routes.View) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		params := r.Form
+		views := di.Get(r, "views").(*template.Template)
+
+		if err := views.ExecuteTemplate(w, string(val), params); err != nil {
+			// Something went wrong either finding or executing the template.
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte("Oops, something went wrong"))
+			log.Printf("unable to execute template `%s`: %s", val, err.Error())
+			return
+		}
+	})
 }
