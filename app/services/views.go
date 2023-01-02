@@ -112,7 +112,15 @@ func findAndParseTemplates(
 
 func (p ViewServiceProvider) viewHandlerTransformer(val routes.View) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		params := r.Form
 		views := di.Get(r, "views").(*template.Template)
-		views.ExecuteTemplate(w, string(val), nil)
+
+		if err := views.ExecuteTemplate(w, string(val), params); err != nil {
+			// Something went wrong either finding or executing the template.
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte("Oops, something went wrong"))
+			log.Printf("unable to execute template `%s`: %s", val, err.Error())
+			return
+		}
 	})
 }
