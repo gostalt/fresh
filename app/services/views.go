@@ -20,16 +20,12 @@ type ViewServiceProvider struct {
 	service.BaseProvider
 }
 
-// path is the directory, relative to the project root, that the
-// view files will be loaded from. It is walked recursively.
-var defaultPath = "resources/views"
-
 func (p ViewServiceProvider) Register(b *di.Builder) {
 	cache := config.Get("views", "cache") == "true"
 
 	path := config.Get("views", "path")
 	if path == "" {
-		path = defaultPath
+		path = "resources/views"
 	}
 
 	b.Add(di.Def{
