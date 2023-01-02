@@ -22,10 +22,15 @@ type ViewServiceProvider struct {
 
 // path is the directory, relative to the project root, that the
 // view files will be loaded from. It is walked recursively.
-var path = "resources/views"
+var defaultPath = "resources/views"
 
 func (p ViewServiceProvider) Register(b *di.Builder) {
-	shared := config.Get("app", "environment") != "production"
+	cache := config.Get("views", "cache") == "true"
+
+	path := config.Get("views", "path")
+	if path == "" {
+		path = defaultPath
+	}
 
 	b.Add(di.Def{
 		Name: "views",
@@ -33,11 +38,7 @@ func (p ViewServiceProvider) Register(b *di.Builder) {
 			return load(path), nil
 		},
 
-		// If the app's environment is not production, then set this
-		// definition to `Unshare`. This means that a new instance
-		// will be created per request, which is inefficient,
-		// but useful for testing.
-		Unshared: shared,
+		Unshared: !cache,
 	})
 }
 

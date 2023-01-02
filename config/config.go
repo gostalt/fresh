@@ -27,6 +27,7 @@ func Load() map[string]map[string]string {
 		"app":      app(environ),
 		"database": database(environ),
 		"logging":  logging(environ),
+		"views":    views(environ),
 	}
 
 	return cfg
