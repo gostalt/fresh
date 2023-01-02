@@ -2,14 +2,17 @@ package services
 
 import (
 	"gostalt/config"
+	"gostalt/routes"
 	"html/template"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/gostalt/framework/service"
+	"github.com/gostalt/router"
 	"github.com/sarulabs/di/v2"
 )
 
@@ -36,6 +39,10 @@ func (p ViewServiceProvider) Register(b *di.Builder) {
 		// but useful for testing.
 		Unshared: shared,
 	})
+}
+
+func (p ViewServiceProvider) Boot(c di.Container) {
+	router.AddHandlerTransformer(p.viewHandlerTransformer)
 }
 
 // load walks through the directory provided and loads all the
@@ -101,4 +108,11 @@ func findAndParseTemplates(
 	)
 
 	return root, err
+}
+
+func (p ViewServiceProvider) viewHandlerTransformer(val routes.View) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		views := di.Get(r, "views").(*template.Template)
+		views.ExecuteTemplate(w, string(val), nil)
+	})
 }
