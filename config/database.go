@@ -1,7 +1,7 @@
 package config
 
-func database(env map[string]string) map[string]string {
-	return map[string]string{
+func database(env map[string]string) domain {
+	return domain{
 		"driver":              env["DB_DRIVER"],
 		"string":              getDbConnectionString(env),
 		"migration_directory": "./database/migrations",
