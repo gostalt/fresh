@@ -22,7 +22,7 @@ type App struct {
 // Make creates an instance of our app and fills the Container
 // using the ServiceProviders defined in services.Providers.
 func Make() *App {
-	config.Load()
+	conf := config.Load()
 
 	// Create a new builder that will be used to populated and
 	// used to create the app dependency injection container.
@@ -31,7 +31,9 @@ func Make() *App {
 		panic("unable to create di builder")
 	}
 
-	for _, provider := range services.Providers {
+	providers := services.Build(conf)
+
+	for _, provider := range providers {
 		provider.Register(builder)
 	}
 
@@ -39,7 +41,7 @@ func Make() *App {
 		Container: builder.Build(),
 	}
 
-	for _, provider := range services.Providers {
+	for _, provider := range providers {
 		provider.Boot(app.Container)
 	}
 

@@ -7,13 +7,15 @@ import (
 	"github.com/joho/godotenv"
 )
 
+type Config map[string]domain
+
 // domain is an area of config for the application that contains a key value list
 // of config items.
 type domain map[string]string
 
 var cfg map[string]domain
 
-func Load() map[string]domain {
+func Load() Config {
 	// If the number of items in cfg is greater than zero, then the config has
 	// already been loaded and we don't need to reload it.
 	if len(cfg) > 0 {

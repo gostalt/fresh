@@ -30,16 +30,6 @@ func (p RouteServiceProvider) Register(b *di.Builder) error {
 		Name: "router",
 		Build: func(c di.Container) (interface{}, error) {
 			r := router.New()
-
-			r.Middleware(p.globalMiddlewareStack(c)...)
-
-			for _, rc := range routeCollections {
-				rc(r)
-			}
-
-			p.registerFaviconRoute(r)
-			p.registerAssetsRoute(r)
-
 			return r, nil
 		},
 	})
@@ -47,6 +37,29 @@ func (p RouteServiceProvider) Register(b *di.Builder) error {
 	if err != nil {
 		return fmt.Errorf("unable to register routing service: %w", err)
 	}
+
+	return nil
+}
+
+func (p RouteServiceProvider) Boot(c di.Container) error {
+	resp, err := c.SafeGet("router")
+	if err != nil {
+		return fmt.Errorf("unable to boot view service: cannot retrieve router from container: %w", err)
+	}
+
+	rtr, ok := resp.(*router.Router)
+	if !ok {
+		return fmt.Errorf("unable to boot view service: router is not of type *router.Router, got %T", rtr)
+	}
+
+	rtr.Middleware(p.globalMiddlewareStack(c)...)
+
+	for _, rc := range routeCollections {
+		rc(rtr)
+	}
+
+	p.registerFaviconRoute(rtr)
+	p.registerAssetsRoute(rtr)
 
 	return nil
 }
