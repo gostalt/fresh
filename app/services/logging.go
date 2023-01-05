@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"gostalt/app/services/logging"
 	"gostalt/config"
 
@@ -13,8 +14,8 @@ type LoggingServiceProvider struct {
 	service.BaseProvider
 }
 
-func (p LoggingServiceProvider) Register(b *di.Builder) {
-	b.Add(di.Def{
+func (p LoggingServiceProvider) Register(b *di.Builder) error {
+	err := b.Add(di.Def{
 		Name: "logger",
 		Build: func(c di.Container) (interface{}, error) {
 			var logger logger.Logger
@@ -22,6 +23,12 @@ func (p LoggingServiceProvider) Register(b *di.Builder) {
 			return logger, nil
 		},
 	})
+
+	if err != nil {
+		return fmt.Errorf("unable to register logging service: %w", err)
+	}
+
+	return nil
 }
 
 func (p LoggingServiceProvider) getLogger(c di.Container) (l logger.Logger) {

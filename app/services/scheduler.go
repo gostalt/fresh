@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"gostalt/app/jobs"
 
 	"github.com/gostalt/framework/schedule"
@@ -24,8 +25,8 @@ func (p SchedulerServiceProvider) jobs(c di.Container) []schedule.Job {
 	}
 }
 
-func (p SchedulerServiceProvider) Register(b *di.Builder) {
-	b.Add(di.Def{
+func (p SchedulerServiceProvider) Register(b *di.Builder) error {
+	err := b.Add(di.Def{
 		Name: "scheduler",
 		Build: func(c di.Container) (interface{}, error) {
 			s := schedule.NewRunner(p.jobs(c)...)
@@ -34,9 +35,13 @@ func (p SchedulerServiceProvider) Register(b *di.Builder) {
 		},
 	})
 
+	if err != nil {
+		return fmt.Errorf("unable to register schedule service: %w", err)
+	}
+
 	// This is just an example, you're free to delete this at
 	// job at any time.
-	b.Add(di.Def{
+	err = b.Add(di.Def{
 		Name: "job-quote",
 		Build: func(c di.Container) (interface{}, error) {
 			logger := c.Get("logger").(logger.Logger)
@@ -44,4 +49,10 @@ func (p SchedulerServiceProvider) Register(b *di.Builder) {
 			return jobs.Quote{Logger: logger}, nil
 		},
 	})
+
+	if err != nil {
+		return fmt.Errorf("unable to register schedule service: %w", err)
+	}
+
+	return nil
 }

@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"gostalt/config"
 	"gostalt/routes"
 	"html/template"
@@ -20,7 +21,7 @@ type ViewServiceProvider struct {
 	service.BaseProvider
 }
 
-func (p ViewServiceProvider) Register(b *di.Builder) {
+func (p ViewServiceProvider) Register(b *di.Builder) error {
 	cache := config.Get("views", "cache") == "true"
 
 	path := config.Get("views", "path")
@@ -28,7 +29,7 @@ func (p ViewServiceProvider) Register(b *di.Builder) {
 		path = "resources/views"
 	}
 
-	b.Add(di.Def{
+	err := b.Add(di.Def{
 		Name: "views",
 		Build: func(c di.Container) (interface{}, error) {
 			return load(path), nil
@@ -36,10 +37,20 @@ func (p ViewServiceProvider) Register(b *di.Builder) {
 
 		Unshared: !cache,
 	})
+
+	if err != nil {
+		return fmt.Errorf("unable to register view service: %w", err)
+	}
+
+	return nil
 }
 
-func (p ViewServiceProvider) Boot(c di.Container) {
-	router.AddHandlerTransformer(p.viewHandlerTransformer)
+func (p ViewServiceProvider) Boot(c di.Container) error {
+	if err := router.AddHandlerTransformer(p.viewHandlerTransformer); err != nil {
+		return fmt.Errorf("unable to boot view service: %w", err)
+	}
+
+	return nil
 }
 
 // load walks through the directory provided and loads all the

@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"gostalt/app/http/middleware"
 	"gostalt/routes"
 	"net/http"
@@ -24,8 +25,8 @@ var routeCollections = []collectionParser{
 	routes.Web,
 }
 
-func (p RouteServiceProvider) Register(b *di.Builder) {
-	b.Add(di.Def{
+func (p RouteServiceProvider) Register(b *di.Builder) error {
+	err := b.Add(di.Def{
 		Name: "router",
 		Build: func(c di.Container) (interface{}, error) {
 			r := router.New()
@@ -42,6 +43,12 @@ func (p RouteServiceProvider) Register(b *di.Builder) {
 			return r, nil
 		},
 	})
+
+	if err != nil {
+		return fmt.Errorf("unable to register routing service: %w", err)
+	}
+
+	return nil
 }
 
 func (p RouteServiceProvider) registerFaviconRoute(r *router.Router) {

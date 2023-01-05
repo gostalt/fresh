@@ -33,6 +33,8 @@ github.com/gorilla/sessions v1.2.0/go.mod h1:dk2InVEVJ0sfLlnXv9EAgkf6ecYs/i80K/z
 github.com/gorilla/websocket v1.4.0/go.mod h1:E7qHFY5m1UJ88s3WnNqhKjPHQ0heANvMoAMk2YaljkQ=
 github.com/gostalt/framework v0.0.0-20200105111330-f7f416e1fe12 h1:m80mLWIBSOISHJh9+xUgN6D4kHu7Wsb+HOJmEgjdK2c=
 github.com/gostalt/framework v0.0.0-20200105111330-f7f416e1fe12/go.mod h1:9AYA2SpMQd8ZGBRRygprRzEu7xc29hVPqk818N0r5Xo=
+github.com/gostalt/framework v0.0.0-20230105100856-0685511e106f h1:4cPHX2vyNPlD4uGpXayPlXyCZLaz6BIDRgr4cB2spEk=
+github.com/gostalt/framework v0.0.0-20230105100856-0685511e106f/go.mod h1:9AYA2SpMQd8ZGBRRygprRzEu7xc29hVPqk818N0r5Xo=
 github.com/gostalt/logger v1.0.0 h1:/0zOilvcnB3U3S21EN2r9RJrKKgTh6TqwwHhEjrR83U=
 github.com/gostalt/logger v1.0.0/go.mod h1:/tUyW+8jsTJwbFCJCA/u7/jGjx/Dl2FowAyFx9IPv84=
 github.com/gostalt/router v0.0.0-20221228214422-80728206197d h1:0wL0Jh+te42gEa2aMFrz5OLNiI9Tz3wJv82b4R4Dd98=

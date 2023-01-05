@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"gostalt/config"
 
 	"github.com/gorilla/sessions"
@@ -12,8 +13,8 @@ type SessionServiceProvider struct {
 	service.BaseProvider
 }
 
-func (p SessionServiceProvider) Register(b *di.Builder) {
-	b.Add(di.Def{
+func (p SessionServiceProvider) Register(b *di.Builder) error {
+	err := b.Add(di.Def{
 		Name: "session",
 		Build: func(c di.Container) (interface{}, error) {
 			store := sessions.NewCookieStore(
@@ -28,4 +29,10 @@ func (p SessionServiceProvider) Register(b *di.Builder) {
 			return store, nil
 		},
 	})
+
+	if err != nil {
+		return fmt.Errorf("unable to register session service: %w", err)
+	}
+
+	return nil
 }
