@@ -5,7 +5,7 @@ go 1.12
 require (
 	github.com/facebookincubator/ent v0.0.0-20191114223858-2b2e056f0511
 	github.com/gorilla/sessions v1.2.0
-	github.com/gostalt/framework v0.0.0-20200105111330-f7f416e1fe12
+	github.com/gostalt/framework v0.0.0-20230105100856-0685511e106f
 	github.com/gostalt/logger v1.0.0
 	github.com/gostalt/router v0.0.0-20221229162035-addf76433640
 	github.com/gostalt/validate v1.2.0

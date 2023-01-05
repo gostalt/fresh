@@ -14,19 +14,23 @@ type TLSServiceProvider struct {
 	service.BaseProvider
 }
 
-func (p TLSServiceProvider) Register(b *di.Builder) {
+func (p TLSServiceProvider) Register(b *di.Builder) error {
 	// If the app environment is in production, we the acme/autocert
 	// package is added to the container to interact with LE.
 	if config.Get("app", "environment") == "production" {
-		b.Add(di.Def{
+		err := b.Add(di.Def{
 			Name: "autocert",
 			Build: func(c di.Container) (interface{}, error) {
 				return p.buildAutocertManager(), nil
 			},
 		})
 
-		return
+		if err != nil {
+			return fmt.Errorf("unable to register tls service: %w", err)
+		}
 	}
+
+	return nil
 }
 
 func (p TLSServiceProvider) buildAutocertManager() *autocert.Manager {

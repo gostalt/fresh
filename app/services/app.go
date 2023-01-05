@@ -1,6 +1,8 @@
 package services
 
 import (
+	"fmt"
+
 	"github.com/gostalt/framework/service"
 	"github.com/sarulabs/di/v2"
 )
@@ -16,6 +18,10 @@ var services = []di.Def{}
 
 // Register registers the list of services in the Container's
 // build definition.
-func (p AppServiceProvider) Register(b *di.Builder) {
-	b.Add(services...)
+func (p AppServiceProvider) Register(b *di.Builder) error {
+	if err := b.Add(services...); err != nil {
+		return fmt.Errorf("unable to register app service: %w", err)
+	}
+
+	return nil
 }
